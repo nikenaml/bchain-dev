@@ -9,3 +9,4 @@ class GeekCoinBlock:
 
         self.block_data = f"{' - '.join(transaction_list)} - {previous_block_hash}"
         self.block_hash = hashlib.sha256(self.block_data.encode()).hexdigest()
+
