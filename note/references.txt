@@ -1,0 +1,1 @@
+scripts\example1 = https://www.specser.com/how-to-create-a-blockchain-with-python/
