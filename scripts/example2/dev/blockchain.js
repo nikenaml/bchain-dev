@@ -41,3 +41,7 @@ Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash) {
     // And after we create a new block, we clear out the new transactions, we push the new block into our chain and we simply return our new block from this method.
 
 }
+
+
+
+module.exports = Blockchain;
