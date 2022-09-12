@@ -57,15 +57,14 @@ Blockchain.prototype.getLastBlock = function(){
 // block chain constructor function is called create new transaction and it will create a new transaction for us.
 Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) {
     // So the first thing that we want to do inside of our create new transaction method is we want to create a transaction object.
-    const newTransactions = {
+    const newTransaction = {
         amount : amount,
         sender: sender,
         recipient : recipient
     };
 
     // Every time that a new transaction is created, it's going to be pushed into our new transactions array.
-    // 
-    this.pendingTransactions = push(this.newTransactions)
+    this.pendingTransactions.push(newTransaction)
 
     // So overall, when a new transaction is created, it is pushed into our pending transactions.
     // Then when a new block is mined or when a new block is created, that's when all of our pending transactions become recorded on our block chain and they are set in stone and they can never be changed
