@@ -1,6 +1,13 @@
 function Blockchain() {
     this.chain = [];
-    this.newTransactions = [];
+
+    // But all of the transactions in here in this area are not really set in stone, they're not really recorded into our block chain yet.
+    // They get recorded into our block chain when a new block is mined, which is when a new block is created.
+    
+    // So all of these new transactions are pretty much just pending transactions and they have not been validated yet.
+    // They get validated and they get pretty much set in stone and recorded an our block chain when we create a new black.
+    
+    this.pendingTransactions = [];
 }
 
 // place a method on our blockchain => create new block
@@ -15,7 +22,7 @@ Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash) {
         timestamp: Date.now(),
 
         // So basically, when we create a new block, we are going to want to put all of the new transactions or all of the pending transactions that have just been created, we are going to want to put those into this new block so that they are inside of our block chain and so that they can never be changed. So inside of this new block, we are going to say all of the transactions in this block. Should be the new transactions that are waiting to be placed into a block.
-        transactions: this.newTransactions,
+        transactions: this.pendingTransactions,
 
         // Basically, nonce comes from a proof of work and a nonce in our case is simply just a number. Could be any number could be to ten, ten thousand one hundred thousand. It doesn't really matter. But this Nonce is pretty much a proof. That we created this new black in a legitimate way by using a proof of work method.
         nonce: nonce,
@@ -29,7 +36,7 @@ Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash) {
     };
 
     // We are putting all of the new transactions into this block, so we want to clear out this entire new transactions array so we can start over for the next block.
-    this.newTransactions = [];
+    this.pendingTransactions = [];
 
     // This basically simply takes this new block that we have created and pushes it into our chain and adds it to our chain.
     this.chain.push(newBlock);
@@ -42,6 +49,33 @@ Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash) {
 
 }
 
+// block chain constructor function will be called the last block and it will simply return to us the last block in our block chain.
+Blockchain.prototype.getLastBlock = function(){
+    return this.chain[this.chain.length - 1];
+}
 
+// block chain constructor function is called create new transaction and it will create a new transaction for us.
+Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) {
+    // So the first thing that we want to do inside of our create new transaction method is we want to create a transaction object.
+    const newTransactions = {
+        amount : amount,
+        sender: sender,
+        recipient : recipient
+    };
+
+    // Every time that a new transaction is created, it's going to be pushed into our new transactions array.
+    // 
+    this.pendingTransactions = push(this.newTransactions)
+
+    // So overall, when a new transaction is created, it is pushed into our pending transactions.
+    // Then when a new block is mined or when a new block is created, that's when all of our pending transactions become recorded on our block chain and they are set in stone and they can never be changed
+
+    return this.getLastBlock()['index'] + 1;
+
+    // so from top to bottom now, the create new transaction method simply creates a new transaction object and then we push that new transaction into our pending transactions.
+    // And finally we return the number of the block that this transaction will be added to.
+
+
+}
 
 module.exports = Blockchain;
