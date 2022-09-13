@@ -120,6 +120,13 @@ Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData)
         hash = this.hashBlock(previousBlockHash,currentBlockData, nonce);
     }
     return nonce;
+
+    // So a proof of work should take a lot of energy and a lot of calculations, and it should be very difficult to calculate. But once we have the correct proof or the correct announce, it should be very easy to verify that we have the correct announced value.
+    // We can verify that we have the correct notes or the correct proof by simply passing it into our hash black method, by running our hash black method, one time we can verify that we have the correct notes because the generated hash starts with four zeros. So that's very important to block chain technology.
+    // It takes a lot of work to generate a proof of work, but it is very easy to verify that that proof of work is correct. So if we ever want to go back into our block chain and check to make sure that a block is valid, all we have to do is hash that blacks data with the previous black's hash. 
+    // And the notes that was generated from the proof of work when that block was mined, if this returns to us a valid hash that starts with four zeros, then we already know that the black is valid. Easy is that it just takes one calculation to prove that the black is valid.
+    // So this is pretty cool stuff, this is a very important part of block chain technology, if you are having a little bit of trouble understanding just exactly how this proof of work is working or how it's securing the black chain.
+
 }
 
 module.exports = Blockchain;
