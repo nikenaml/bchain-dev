@@ -9,8 +9,21 @@ bitcoin.createNewBlock(2389, 'QWERTYUIOP098','POIUYTREWQ1233');
 
 bitcoin.createNewTransaction(132,'Niken123098','Ival098321');
 
-// bitcoin.createNewBlock(111, 'asdfghjkl098','lkjhgfdsa123');
+// So how can we get this pending transaction into our actual block chain up here?
+// Well, the way that we do that is we have to mind a new block or create a new block, so let's do that
+bitcoin.createNewBlock(111, 'asdfghjkl098','lkjhgfdsa123');
+// So now we create a block, we create a transaction and then we a block, so this transaction that we created should show up in our second block 
+// because we mine a block. After we created a transaction,
+
+bitcoin.createNewTransaction(150,'Ival310899','Niken051199');
+bitcoin.createNewTransaction(3000,'Ival310899','Niken051199');
+bitcoin.createNewTransaction(2150,'Ival310899','Niken051199');
+bitcoin.createNewBlock(876, 'zxcvbnm098','mnbvcxz123');
+
+
+
+
 // bitcoin.createNewBlock(1909, 'ZXCVBNM456','MNBVCXZ654');
 
-console.log(bitcoin);
+console.log(bitcoin.chain[2]);
 // console.log(bitcoin.chain[1]);

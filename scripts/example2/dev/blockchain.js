@@ -1,3 +1,4 @@
+const sha256 = require('sha256');
 function Blockchain() {
     this.chain = [];
 
@@ -74,6 +75,15 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
     // so from top to bottom now, the create new transaction method simply creates a new transaction object and then we push that new transaction into our pending transactions.
     // And finally we return the number of the block that this transaction will be added to.
 
+
+}
+
+// What this hash block method will do is it will take in a block from our block chain and hash that block into some fixed length string that to us will appear pretty much random.
+// So in essence, we're going to pass some block or some block data into our method and in return or. In return.
+Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, nonce) {
+    const dataAsString = previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData)
+    const hash = sha256(dataAsString);
+    return hash;
 
 }
 
