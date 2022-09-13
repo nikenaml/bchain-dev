@@ -87,4 +87,39 @@ Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, n
 
 }
 
+// A proof of work is very essential to block chain technology, and it is one of the reasons that Bitcoin and many other black chains are so very secure.
+// So what is a proof of work?
+// Well, if we take a look at our black chain, every black chain is pretty much a list of blocks, right?
+// Every single block has to be created and added to the chain. But we don't want just any block being created and added to the chain.
+// We want to make sure that every block that is added to the chain is legitimate and it has the correct transactions and the correct data inside of it, because if it doesn't have the correct transactions
+// and the correct data, then people could fake how much bitcoin they have and essentially cause fraud and steal money from other people.
+// So every time that we create a new block, we first have to make sure that it is a legitimate block by mining it through proof of work.
+// So what does a proof of work method actually do? A proof of work method will take in the current Block's data and the previous block hash.
+// And from this data that we supply it, it is going to try to generate a specific hash.
+// This specific hash in our case is going to be a hash that starts with four zeros. So given the current block data and the previous black hash.
+// Somehow we have to generate a resulting hash that begins with four zeros.
+
+Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData) {
+    // The reason that this proof of work method will secure our block chain is because in order to generate the correct hash, we are going to have to run our hash black method many, many times, tens of thousands of times or hundreds of thousands of times, and is going to use a lot of computing power and a lot of energy.
+    // So if somebody wanted to go back into the black chain and try and change a block or try to change some data in that block, perhaps to give themselves more bitcoin, they would have to do a ton of calculations and use a lot of energy to create the correct hash.
+    // So in most cases, going back and trying to recreate an already existing block or trying to remain an already existing block with your own fake data is not feasible.
+    // On top of that, not only does our hash block method take in the current black data, but it also takes in the previous Black's hash, this means that all of the blacks in the block chain are linked together by their data.
+    // So if somebody was to try and go back and remind or recreate a block that already exists, they would also have to remind and recreate every single block that comes after the first one they recreated.
+    // This would take an incredible amount of calculations and energy and is just not feasible for a well developed block chain.
+    // A person would have to go in, recreate a block by using a proof of work. And then recreate every block after that by doing a new proof of work for each block.
+    // This is just not feasible for any well produced block chain, and this is why block chain technology is so secure
+    // basically what our proof of work method will do is it will repeatedly hash our previous block hash and our current block of data and announce. Until we get an acceptable hash generated, that starts with four zeros.
+
+    let nonce = 0;
+    let hash = this.hashBlock(previousBlockHash,currentBlockData, nonce);
+    // Our proof of work method generates a bunch of different hashes. By incrementing our note's value. Then at the end of the method, we simply return the notes value that gives us a valid hash in which the first four characters are zero zero zero zero.
+    // So after this whole proof of work method runs, we will get the correct notes value that we need return from our proof of work.
+    
+    while (hash.substring(0,4) !== '0000'){
+        nonce++;
+        hash = this.hashBlock(previousBlockHash,currentBlockData, nonce);
+    }
+    return nonce;
+}
+
 module.exports = Blockchain;
