@@ -9,6 +9,15 @@ function Blockchain() {
     // They get validated and they get pretty much set in stone and recorded an our block chain when we create a new black.
     
     this.pendingTransactions = [];
+
+
+    // a genesis block is quite simply the first block in a block chain, every block chain needs to start off with one block, and that's called the Genesis block. And we want this to happen right when the block chain is created.
+    // So in order to create our Genesis Block, we are going to use our create new block method right inside of our block chain constructor function. So let's do that now. So we will say this does create New Block. 
+    // And we can see that this method takes in a notes, a previous block hash and a hash as parameters. Now, since this is the Genesis block, we are not going to have a previous block hash.
+    // And since we are not doing a proof of work to create this block, we are also not going to have a notice and we're not going to have a hash for this block as well. So inside of our create new block method, we're simply going to pass in some arbitrary parameters,
+    // we will pass on a notice of one hundred, a previous block hash of the string zero.And a hash that is also of the string zero. And you can really make these parameters, whatever you want to make there, kind of just arbitrary for creating our Genesis block.
+    this.createNewBlock(100,'0','0');
+
 }
 
 // place a method on our blockchain => create new block

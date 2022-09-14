@@ -20,29 +20,31 @@ const bitcoin = new Blockchain();
 // bitcoin.createNewTransaction(2150,'Ival310899','Niken051199');
 // bitcoin.createNewBlock(1909, 'ZXCVBNM456','MNBVCXZ654');
 
-const previousBlockHash = 'QWERTYUIOP098POIUYTREWQ';
-const currentBlockData = [
-    {
-        amount: 10,
-        sender: 'NIKENasdfghjkl123',
-        recipient: 'MEKAlkjhgfdsa123'
-    },
-    {
-        amount: 4710,
-        sender: 'MELANIasdfghjkl123',
-        recipient: 'INDIRAlkjhgfdsa123'
-    },
-    {
-        amount: 99110,
-        sender: 'NINDAasdfghjkl123',
-        recipient: 'METAlkjhgfdsa123'
-    }
-]
+// const previousBlockHash = 'QWERTYUIOP098POIUYTREWQ';
+// const currentBlockData = [
+//     {
+//         amount: 10,
+//         sender: 'NIKENasdfghjkl123',
+//         recipient: 'MEKAlkjhgfdsa123'
+//     },
+//     {
+//         amount: 4710,
+//         sender: 'MELANIasdfghjkl123',
+//         recipient: 'INDIRAlkjhgfdsa123'
+//     },
+//     {
+//         amount: 99110,
+//         sender: 'NINDAasdfghjkl123',
+//         recipient: 'METAlkjhgfdsa123'
+//     }
+// ]
 // const nonce = 100;
 
 // console.log(bitcoin.hashBlock(previousBlockHash,currentBlockData,nonce))
 
-console.log(bitcoin.proofOfWork(previousBlockHash,currentBlockData));
-console.log(bitcoin.hashBlock(previousBlockHash,currentBlockData, 18335));
+// console.log(bitcoin.proofOfWork(previousBlockHash,currentBlockData));
+// console.log(bitcoin.hashBlock(previousBlockHash,currentBlockData, 18335));
 // console.log(bitcoin.chain[2]);
 // console.log(bitcoin.chain[1]);
+
+console.log(bitcoin);
