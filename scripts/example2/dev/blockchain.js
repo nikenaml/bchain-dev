@@ -1,4 +1,6 @@
 const sha256 = require('sha256');
+const currentNodeUrl = process.argv[3];
+
 function Blockchain() {
     this.chain = [];
 
@@ -9,6 +11,9 @@ function Blockchain() {
     // They get validated and they get pretty much set in stone and recorded an our block chain when we create a new black.
     
     this.pendingTransactions = [];
+
+    this.currentNodeUrl = currentNodeUrl;
+    this.networkNodes = [];
 
 
     // a genesis block is quite simply the first block in a block chain, every block chain needs to start off with one block, and that's called the Genesis block. And we want this to happen right when the block chain is created.

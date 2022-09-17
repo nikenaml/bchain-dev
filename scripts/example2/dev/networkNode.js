@@ -56,7 +56,17 @@ app.get('/mine', function (req, res) {
 
 });
 
+// So now in our block chain, we want to be able to create a network and we want to have a way of registering all these different nodes with our network.
+// So right now, we're going to make a couple more end points that will make registering nodes with our network possible.
+// register a node and broadcast it the network
+app.post('/register-and-broadcast-node', function(req,res) {
+    const newNodeUrl = req.body.newNodeUrl;
+});
 
+// register a node with the network
+app.post('/register-node', function(req,res) {
+
+});
 
 app.listen(port, function(){
     // the reason that we do this is just so that when our port is actually running, we will know that because we'll see this text.
