@@ -3,6 +3,11 @@ const app = express()
 const bodyParser = require('body-parser');
 const Blockchain = require('./blockchain');
 
+// this library does for us is it creates a unique string, a unique random string for us. And we're going to use that string as this network nodes address.
+const uuid = require('uuid');
+const { json } = require('body-parser');
+const nodeAddress = uuid.v1().split('-').join('');
+
 // we want to make an instance of our block chain so we will say consed bitcoin equals a new block
 const bitcoin = new Blockchain();
 
@@ -28,6 +33,23 @@ app.post('/transaction', function (req, res) {
 
 // this mine endpoint will do is it will mine a new block for us or create a new block for us,
 app.get('/mine', function (req, res) {
+    const lastBlock = bitcoin.getLastBlock();
+	const previousBlockHash = lastBlock['hash'];
+	const currentBlockData = {
+		transactions: bitcoin.pendingTransactions,
+		index: lastBlock['index'] + 1
+	};
+	const nonce = bitcoin.proofOfWork(previousBlockHash, currentBlockData);
+	const blockHash = bitcoin.hashBlock(previousBlockHash, currentBlockData, nonce);
+	
+    bitcoin.createNewTransaction(12.5,"00",nodeAddress);
+    
+    const newBlock = bitcoin.createNewBlock(nonce, previousBlockHash, blockHash);
+
+    res.json ({
+        note:"New block mined successfully",
+        block:newBlock
+    });
 
 });
 
