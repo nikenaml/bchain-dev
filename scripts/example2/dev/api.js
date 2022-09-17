@@ -9,7 +9,8 @@ app.get('/blockchain', function (req, res) {
 });
 
 app.post('/transaction', function (req, res) {
-
+    console.log(req.body);
+    res.send('The amount of the transaction is ${req.body.amount} bitcoin');
 });
 
 // this mine endpoint will do is it will mine a new block for us or create a new block for us,
