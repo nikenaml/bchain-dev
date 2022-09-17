@@ -5,8 +5,11 @@ const Blockchain = require('./blockchain');
 
 // this library does for us is it creates a unique string, a unique random string for us. And we're going to use that string as this network nodes address.
 const uuid = require('uuid');
-const { json } = require('body-parser');
+// const { json } = require('body-parser');
 const nodeAddress = uuid.v1().split('-').join('');
+
+// So in order to get access to this variable in our network, a node file, we are using this process,
+const port = process.argv[2];
 
 // we want to make an instance of our block chain so we will say consed bitcoin equals a new block
 const bitcoin = new Blockchain();
@@ -55,7 +58,7 @@ app.get('/mine', function (req, res) {
 
 
 
-app.listen(3000, function(){
+app.listen(port, function(){
     // the reason that we do this is just so that when our port is actually running, we will know that because we'll see this text.
-    console.log('Listening on port 3000...');
+    console.log(`Listening on port ${port}...`);
 });
