@@ -11,6 +11,8 @@ const nodeAddress = uuid.v1().split('-').join('');
 // So in order to get access to this variable in our network, a node file, we are using this process,
 const port = process.argv[2];
 
+const rp = require('request-promise');
+
 // we want to make an instance of our block chain so we will say consed bitcoin equals a new block
 const bitcoin = new Blockchain();
 
@@ -98,6 +100,18 @@ app.post('/register-node', function(req,res) {
 	const notCurrentNode = bitcoin.currentNodeUrl !== newNodeUrl;
 	if (nodeNotAlreadyPresent && notCurrentNode) bitcoin.networkNodes.push(newNodeUrl);
 	res.json({ note: 'New node registered successfully with node.' });
+});
+
+// register multiple nodes at once
+app.post('/register-nodes-bulk', function(req, res) {
+	const allNetworkNodes = req.body.allNetworkNodes;
+	allNetworkNodes.forEach(networkNodeUrl => {
+		const nodeNotAlreadyPresent = bitcoin.networkNodes.indexOf(networkNodeUrl) == -1;
+		const notCurrentNode = bitcoin.currentNodeUrl !== networkNodeUrl;
+		if (nodeNotAlreadyPresent && notCurrentNode) bitcoin.networkNodes.push(networkNodeUrl);
+	});
+
+	res.json({ note: 'Bulk registration successful.' });
 });
 
 app.listen(port, function(){
