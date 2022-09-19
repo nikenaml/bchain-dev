@@ -62,14 +62,35 @@ Blockchain.prototype.createNewBlock = function(nonce, previousBlockHash, hash) {
     // And inside of this block, we have our transactions, the new transactions that have that have been created since our last block was mined.
     // And after we create a new block, we clear out the new transactions, we push the new block into our chain and we simply return our new block from this method.
 
-}
+};
 
 // block chain constructor function will be called the last block and it will simply return to us the last block in our block chain.
 Blockchain.prototype.getLastBlock = function(){
     return this.chain[this.chain.length - 1];
-}
+};
 
-// block chain constructor function is called create new transaction and it will create a new transaction for us.
+// // block chain constructor function is called create new transaction and it will create a new transaction for us.
+// Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) {
+//     // So the first thing that we want to do inside of our create new transaction method is we want to create a transaction object.
+//     const newTransaction = {
+//         amount : amount,
+//         sender: sender,
+//         recipient : recipient
+//     };
+
+//     // Every time that a new transaction is created, it's going to be pushed into our new transactions array.
+//     this.pendingTransactions.push(newTransaction)
+
+//     // So overall, when a new transaction is created, it is pushed into our pending transactions.
+//     // Then when a new block is mined or when a new block is created, that's when all of our pending transactions become recorded on our block chain and they are set in stone and they can never be changed
+
+//     return this.getLastBlock()['index'] + 1;
+
+//     // so from top to bottom now, the create new transaction method simply creates a new transaction object and then we push that new transaction into our pending transactions.
+//     // And finally we return the number of the block that this transaction will be added to.
+// };
+
+
 Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) {
     // So the first thing that we want to do inside of our create new transaction method is we want to create a transaction object.
     const newTransaction = {
@@ -77,20 +98,13 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
         sender: sender,
         recipient : recipient
     };
+    return newTransaction;
+};
 
-    // Every time that a new transaction is created, it's going to be pushed into our new transactions array.
-    this.pendingTransactions.push(newTransaction)
-
-    // So overall, when a new transaction is created, it is pushed into our pending transactions.
-    // Then when a new block is mined or when a new block is created, that's when all of our pending transactions become recorded on our block chain and they are set in stone and they can never be changed
-
-    return this.getLastBlock()['index'] + 1;
-
-    // so from top to bottom now, the create new transaction method simply creates a new transaction object and then we push that new transaction into our pending transactions.
-    // And finally we return the number of the block that this transaction will be added to.
-
-
-}
+Blockchain.prototype.addTransactionToPendingTransactions = function(transactionObj) {
+    this.pendingTransactions.push(transactionObj);
+    return this.getLastBlock()['index'] = 1;
+};
 
 // What this hash block method will do is it will take in a block from our block chain and hash that block into some fixed length string that to us will appear pretty much random.
 // So in essence, we're going to pass some block or some block data into our method and in return or. In return.
@@ -99,7 +113,7 @@ Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, n
     const hash = sha256(dataAsString);
     return hash;
 
-}
+};
 
 // A proof of work is very essential to block chain technology, and it is one of the reasons that Bitcoin and many other black chains are so very secure.
 // So what is a proof of work?
@@ -141,6 +155,6 @@ Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData)
     // And the notes that was generated from the proof of work when that block was mined, if this returns to us a valid hash that starts with four zeros, then we already know that the black is valid. Easy is that it just takes one calculation to prove that the black is valid.
     // So this is pretty cool stuff, this is a very important part of block chain technology, if you are having a little bit of trouble understanding just exactly how this proof of work is working or how it's securing the black chain.
 
-}
+};
 
 module.exports = Blockchain;
