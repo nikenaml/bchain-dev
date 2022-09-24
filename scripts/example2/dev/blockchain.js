@@ -1,5 +1,6 @@
 const sha256 = require('sha256');
 const currentNodeUrl = process.argv[3];
+const uuid = require('uuid');
 
 function Blockchain() {
     this.chain = [];
@@ -90,15 +91,16 @@ Blockchain.prototype.getLastBlock = function(){
 //     // And finally we return the number of the block that this transaction will be added to.
 // };
 
-
 Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) {
     // So the first thing that we want to do inside of our create new transaction method is we want to create a transaction object.
-    const newTransaction = {
-        amount : amount,
-        sender: sender,
-        recipient : recipient
-    };
-    return newTransaction;
+	const newTransaction = {
+		amount: amount,
+		sender: sender,
+		recipient: recipient,
+		transactionId: uuid.v1().split('-').join('')
+	};
+
+	return newTransaction;
 };
 
 Blockchain.prototype.addTransactionToPendingTransactions = function(transactionObj) {
