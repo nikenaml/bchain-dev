@@ -200,9 +200,25 @@ Blockchain.prototype.chainIsValid = function(blockchain) {
 };
 
 
+// Is he is that that's all we're going to be doing an hour get block method so top to bottom, our new
+// method called Get Block, takes in a black hash as a parameter.
+// We then cycle through every single black in our chain.
+// If one of the blacks in our chain has the hash that we are looking for, then we set our correct black
+// variable equal to the black that has the hash we are looking for.
+// And finally, at the end, we return our correct black variable, so when we return this variable,
+// it can be one of two things, right?
+// It can either be a single black, which is the black that has the hash we are looking for.
+// Or if we cannot find this hash that we are looking for, then this correct black variable will be the
+// value, no.
+// So if we get no return from our get black method, we know that the hash that we are looking for is
+// not present inside of our black chain.
+// And that's it, so that's how we will retrieve a certain block by searching for that black hash.
+
+
 // So all we want to do inside of this method is we want to iterate through our entire block chain and search for the block that has this black hash, then we want to return that specific black
 Blockchain.prototype.getBlock = function(blockHash) {
 	let correctBlock = null;
+    // So now we are cycling through every single black inside of our black chain.
 	this.chain.forEach(block => {
 		if (block.hash === blockHash) correctBlock = block;
 	});
