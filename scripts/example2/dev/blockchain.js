@@ -159,4 +159,41 @@ Blockchain.prototype.proofOfWork = function(previousBlockHash, currentBlockData)
 
 };
 
+// So one more time from top to bottom, we are simply iterating through every single black inside of the
+// black chain that's passed in.
+// And we are comparing the hashes on every single block to make sure that they are correct, if they are
+// not correct, we indicate that the change is not valid.
+// We are also checking to make sure that every block has the correct data by rehashing every single block
+// and making sure that our newly generated hash starts with four zeros.
+// If it does not start with four zeros.
+// We know that the data has been changed because our hash is now different.
+// So we indicate that the chain is not valid.
+// And then finally we simply check to make sure that our agenesis block has all of the correct data if
+// it does not have the correct data in it.
+// We simply indicate that the chain is not valid.
+// And with this variable, we are simply returning true if the chain is valid and false if the chain is
+// not valid,
+
+Blockchain.prototype.chainIsValid = function(blockchain) {
+	let validChain = true;
+
+	for (var i = 1; i < blockchain.length; i++) {
+		const currentBlock = blockchain[i];
+		const prevBlock = blockchain[i - 1];
+		const blockHash = this.hashBlock(prevBlock['hash'], { transactions: currentBlock['transactions'], index: currentBlock['index'] }, currentBlock['nonce']);
+		if (blockHash.substring(0, 4) !== '0000') validChain = false;
+		if (currentBlock['previousBlockHash'] !== prevBlock['hash']) validChain = false;
+	};
+
+	const genesisBlock = blockchain[0];
+	const correctNonce = genesisBlock['nonce'] === 100;
+	const correctPreviousBlockHash = genesisBlock['previousBlockHash'] === '0';
+	const correctHash = genesisBlock['hash'] === '0';
+	const correctTransactions = genesisBlock['transactions'].length === 0;
+
+	if (!correctNonce || !correctPreviousBlockHash || !correctHash || !correctTransactions) validChain = false;
+
+	return validChain;
+};
+
 module.exports = Blockchain;
