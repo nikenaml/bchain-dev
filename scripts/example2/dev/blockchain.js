@@ -105,7 +105,7 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
 
 Blockchain.prototype.addTransactionToPendingTransactions = function(transactionObj) {
     this.pendingTransactions.push(transactionObj);
-    return this.getLastBlock()['index'] = 1;
+    return this.getLastBlock()['index'] + 1;
 };
 
 // What this hash block method will do is it will take in a block from our block chain and hash that block into some fixed length string that to us will appear pretty much random.
@@ -183,7 +183,10 @@ Blockchain.prototype.chainIsValid = function(blockchain) {
 		const blockHash = this.hashBlock(prevBlock['hash'], { transactions: currentBlock['transactions'], index: currentBlock['index'] }, currentBlock['nonce']);
 		if (blockHash.substring(0, 4) !== '0000') validChain = false;
 		if (currentBlock['previousBlockHash'] !== prevBlock['hash']) validChain = false;
-	};
+	
+        console.log('previousBlockHash =>', prevBlock['hash']);
+        console.log('currentBlockHash =>', currentBlock['hash']);
+    };
 
 	const genesisBlock = blockchain[0];
 	const correctNonce = genesisBlock['nonce'] === 100;
