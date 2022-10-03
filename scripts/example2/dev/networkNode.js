@@ -240,6 +240,15 @@ app.get('/consensus', function(req, res) {
 	});
 });
 
+// get block by blockHash
+app.get('/block/:blockHash', function(req, res) { 
+	const blockHash = req.params.blockHash;
+	const correctBlock = bitcoin.getBlock(blockHash);
+	res.json({
+		block: correctBlock
+	});
+});
+
 
 app.listen(port, function(){
     // the reason that we do this is just so that when our port is actually running, we will know that because we'll see this text.

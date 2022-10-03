@@ -199,4 +199,16 @@ Blockchain.prototype.chainIsValid = function(blockchain) {
 	return validChain;
 };
 
+
+// So all we want to do inside of this method is we want to iterate through our entire block chain and search for the block that has this black hash, then we want to return that specific black
+Blockchain.prototype.getBlock = function(blockHash) {
+	let correctBlock = null;
+	this.chain.forEach(block => {
+		if (block.hash === blockHash) correctBlock = block;
+	});
+	return correctBlock;
+};
+
+
+
 module.exports = Blockchain;
