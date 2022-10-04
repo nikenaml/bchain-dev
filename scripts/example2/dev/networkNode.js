@@ -242,8 +242,11 @@ app.get('/consensus', function(req, res) {
 
 // get block by blockHash
 app.get('/block/:blockHash', function(req, res) { 
+	// So the first thing that we want to do in this end point is we want to use the black hash that is sent in and this request and we can access this black hash and the req programs object.
 	const blockHash = req.params.blockHash;
+	// use our new get Block method inside of our block block hash and point to retrieve a specific block by its block hash.
 	const correctBlock = bitcoin.getBlock(blockHash);
+	// All we have to do now is send back this variable or this correct black as a response.
 	res.json({
 		block: correctBlock
 	});
