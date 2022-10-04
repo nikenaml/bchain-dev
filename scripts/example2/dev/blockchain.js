@@ -225,19 +225,23 @@ Blockchain.prototype.getBlock = function(blockHash) {
 	return correctBlock;
 };
 
+//  get transaction that will allow us to get a specific transaction by passing in a transaction I.D. and we will use this new method inside of our transaction transaction I.D. and point.
 Blockchain.prototype.getTransaction = function(transactionId) {
 	let correctTransaction = null;
 	let correctBlock = null;
 
 	this.chain.forEach(block => {
 		block.transactions.forEach(transaction => {
+            // So now we have access to every single transaction that is on our block chain and we simply want to compare the ideas of every transaction to the idea that we are looking for. And if it's the correct I.D., then we know we have found the correct transaction.
 			if (transaction.transactionId === transactionId) {
+                // if we have found the correct transaction, we will simply set correct transaction equal to the transaction that we are currently on.
 				correctTransaction = transaction;
 				correctBlock = block;
 			};
 		});
 	});
 
+    // And then finally, the last thing that we want to do is we want to return these two pieces of data. So at the bottom here, we will simply say return an object. That has the transaction property equal to the correct transaction and the black property equal to the correct block, and that's it, that's our get transaction method, easy as that.
 	return {
 		transaction: correctTransaction,
 		block: correctBlock
