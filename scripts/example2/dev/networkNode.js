@@ -262,6 +262,15 @@ app.get('/transaction/:transactionId', function(req, res) {
 	});
 });
 
+// get address by address
+app.get('/address/:address', function(req, res) {
+	const address = req.params.address;
+	const addressData = bitcoin.getAddressData(address);
+	res.json({
+		addressData: addressData
+	});
+});
+
 app.listen(port, function(){
     // the reason that we do this is just so that when our port is actually running, we will know that because we'll see this text.
     console.log(`Listening on port ${port}...`);
