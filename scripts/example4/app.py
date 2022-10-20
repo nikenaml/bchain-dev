@@ -4,7 +4,7 @@ from flaskext.mysql import MySQL
 import pymysql
  
 app = Flask(__name__)
-# app.secret_key = "Cairocoders-Ednalan"
+app.secret_key = "Cairocoders-Ednalan"
   
 mysql = MySQL()
    
@@ -24,7 +24,7 @@ def Index():
     data = cur.fetchall()
   
     cur.close()
-    return render_template('index.html', employee = data)
+    return render_template('index.html', order = data)
  
 @app.route('/add_barang', methods=['POST'])
 def add_employee():
@@ -44,10 +44,14 @@ def add_employee():
         flash('Order Added successfully')
         return redirect(url_for('Index'))
  
-@app.route("/add_barang)
-def input():
-    cityList=db.execute("SELECT * FROM item order by nama_barang")
-    return render_template("index.html",cityList=cityList )
+# @app.route("/add_barang)
+def input_barang():
+    itemList=db.execute("SELECT * FROM item by nama_barang")
+    return render_template("index.html",itemList=itemList )
+
+def input_jenis():
+    paymenttypeList=db.execute("SELECT * FROM payment_type by jenis_bayar")
+    return render_template("index.html",paymenttypeList=paymenttypeList )
 
 @app.route('/edit/<id>', methods = ['POST', 'GET'])
 def get_barang(id):
@@ -99,4 +103,6 @@ def delete_employee(id):
  
 # starting the app
 if __name__ == "__main__":
-    app.run(port=3000, debug=True)
+    # app.run(port=3000, debug=True)
+    app.run(debug=True)
+
