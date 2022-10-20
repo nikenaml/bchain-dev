@@ -20,14 +20,14 @@ def Index():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
  
-    cur.execute("SELECT * FROM `order`")
+    cur.execute("SELECT * FROM `orders`")
     data = cur.fetchall()
   
     cur.close()
     return render_template('index.html', order = data)
  
-@app.route('/add_barang', methods=['POST'])
-def add_barang():
+@app.route('/add_order', methods=['POST'])
+def add_order():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     if request.method == 'POST':
@@ -39,33 +39,33 @@ def add_barang():
         jumlah_barang = request.form['jumlah_barang']
         jenis_pembayaran = request.form['jenis_pembayaran']
         total_harga = request.form['total_harga']
-        cur.execute("INSERT INTO `order` (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga) VALUES (%s,%s,%s)", (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga))
+        cur.execute("INSERT INTO `orders` (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga) VALUES (%s,%s,%s)", (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga))
         conn.commit()
         flash('Order Added successfully')
         return redirect(url_for('Index'))
  
 # @app.route("/add_barang)
 def input_barang():
-    itemList=db.execute("SELECT * FROM item by nama_barang")
+    itemList=db.execute("SELECT * FROM `items`")
     return render_template("index.html",itemList=itemList )
 
 def input_jenis():
-    paymenttypeList=db.execute("SELECT * FROM payment_type by jenis_bayar")
+    paymenttypeList=db.execute("SELECT * FROM `payment_type`")
     return render_template("index.html",paymenttypeList=paymenttypeList )
 
 @app.route('/edit/<id>', methods = ['POST', 'GET'])
-def get_barang(id):
+def get_order(id):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
   
-    cur.execute('SELECT * FROM order WHERE id = %s', (id))
+    cur.execute('SELECT * FROM `orders` WHERE id = %s', (id))
     data = cur.fetchall()
     cur.close()
     print(data[0])
     return render_template('edit.html', employee = data[0])
  
 @app.route('/update/<id>', methods=['POST'])
-def update_barang(id):
+def update_order(id):
     if request.method == 'POST':
         nama_pt = request.form['nama_pt']
         nama_pemesan = request.form['nama_pemesan']
@@ -77,7 +77,7 @@ def update_barang(id):
         conn = mysql.connect()
         cur = conn.cursor(pymysql.cursors.DictCursor)
         cur.execute("""
-            UPDATE order
+            UPDATE `orders`
             SET nama_pt = %s,
                 nama_pemesan = %s,
                 no_hp_pemesan = %s,
@@ -86,17 +86,17 @@ def update_barang(id):
                 jumlah_barang = %s,
                 jenis_pembayaran = %s
             WHERE id = %s
-        """, (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga, id))
+        """, (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, id))
         flash('Order Updated Successfully')
         conn.commit()
         return redirect(url_for('Index'))
  
 @app.route('/delete/<string:id>', methods = ['POST','GET'])
-def delete_barang(id):
+def delete_order(id):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
   
-    cur.execute('DELETE order WHERE id = {0}'.format(id))
+    cur.execute('DELETE `orders` WHERE id = {0}'.format(id))
     conn.commit()
     flash('Order Removed Successfully')
     return redirect(url_for('Index'))
