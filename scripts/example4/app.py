@@ -22,9 +22,15 @@ def Index():
  
     cur.execute("SELECT * FROM `orders`")
     data = cur.fetchall()
+
+    cur.execute("SELECT DISTINCT nama_barang FROM `items` ORDER BY nama_barang ASC")
+    itemList = cur.fetchall()
+
+    cur.execute("SELECT DISTINCT jenis_bayar FROM `payment_type` ORDER BY jenis_bayar ASC")
+    paymenttypeList = cur.fetchall()
   
     cur.close()
-    return render_template('index.html', order = data)
+    return render_template('index.html', orders = data, itemList= itemList, paymenttypeList= paymenttypeList)
  
 @app.route('/add_order', methods=['POST'])
 def add_order():
@@ -43,14 +49,16 @@ def add_order():
         conn.commit()
         flash('Order Added successfully')
         return redirect(url_for('Index'))
- 
-# @app.route("/add_barang)
-def input_barang():
-    itemList=db.execute("SELECT * FROM `items`")
-    return render_template("index.html",itemList=itemList )
 
+
+@app.route("/add_order")
 def input_jenis():
-    paymenttypeList=db.execute("SELECT * FROM `payment_type`")
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+  
+    cur.execute("SELECT DISTINCT jenis_bayar FROM `payment_type` ORDER BY jenis_bayar ASC")
+    paymenttypeList = cur.fetchall()
+    cur.close()
     return render_template("index.html",paymenttypeList=paymenttypeList )
 
 @app.route('/edit/<id>', methods = ['POST', 'GET'])
@@ -62,7 +70,7 @@ def get_order(id):
     data = cur.fetchall()
     cur.close()
     print(data[0])
-    return render_template('edit.html', employee = data[0])
+    return render_template('edit.html', order = data[0])
  
 @app.route('/update/<id>', methods=['POST'])
 def update_order(id):
