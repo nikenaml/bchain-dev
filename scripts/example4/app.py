@@ -6,7 +6,7 @@ import pymysql
 app = Flask(__name__)
 app.secret_key = "Cairocoders-Ednalan"
   
-mysql = MySQL()
+mysql = MySQL(app)
    
 # MySQL configurations
 app.config['MYSQL_DATABASE_USER'] = 'root'
@@ -20,14 +20,14 @@ def Index():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
  
-    cur.execute('SELECT * FROM order')
+    cur.execute("SELECT * FROM `order`")
     data = cur.fetchall()
   
     cur.close()
     return render_template('index.html', order = data)
  
 @app.route('/add_barang', methods=['POST'])
-def add_employee():
+def add_barang():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     if request.method == 'POST':
@@ -39,7 +39,7 @@ def add_employee():
         jumlah_barang = request.form['jumlah_barang']
         jenis_pembayaran = request.form['jenis_pembayaran']
         total_harga = request.form['total_harga']
-        cur.execute("INSERT INTO order (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga) VALUES (%s,%s,%s)", (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga))
+        cur.execute("INSERT INTO `order` (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga) VALUES (%s,%s,%s)", (nama_pt, nama_pemesan, no_hp_pemesan, email_kantor, nama_barang, jumlah_barang, jenis_pembayaran, total_harga))
         conn.commit()
         flash('Order Added successfully')
         return redirect(url_for('Index'))
@@ -92,7 +92,7 @@ def update_barang(id):
         return redirect(url_for('Index'))
  
 @app.route('/delete/<string:id>', methods = ['POST','GET'])
-def delete_employee(id):
+def delete_barang(id):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
   
