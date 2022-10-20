@@ -44,6 +44,11 @@ def add_employee():
         flash('Order Added successfully')
         return redirect(url_for('Index'))
  
+@app.route("/add_barang)
+def input():
+    cityList=db.execute("SELECT * FROM item order by nama_barang")
+    return render_template("index.html",cityList=cityList )
+
 @app.route('/edit/<id>', methods = ['POST', 'GET'])
 def get_barang(id):
     conn = mysql.connect()
