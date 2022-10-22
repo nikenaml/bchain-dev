@@ -1,54 +1,73 @@
 <!-- //layout.html -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Supply Chain Management Platform</title>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>  
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<head>
+  <meta charset="UTF-8">
+  <title>Supply Chain Management Platform</title>
+  <script src="{{url_for('static', filename='vendor/jquery/jquery-3.6.1.min.js')}}"></script>
+  <link rel="stylesheet" href="{{url_for('static', filename='vendor/datatables/datatables.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-5.2.2/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/custom.css')}}">
+</head>
 
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
- 
-  </head>
-  <body>
- 
-    <!-- NAVIGATION  -->
-    <nav class="navbar navbar-dark bg-dark">
-      <a class="navbar-brand" href="/">Supply Chain Management Platform</a>
-    </nav>
- 
-    <div class="container pt-4">
-      {% block body %}
-      {% endblock %}
+<body class="m-0 p-0">
+
+  <!-- NAVIGATION  -->
+  <nav class="navbar bg-danger bg-opacity-75 sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="/">Supply Chain Management Platform</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+        aria-controls="offcanvasNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Pilih user</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/supplier">Supplier</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/finance">Finance</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Core Enterprise
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/enterprise">Menu utama</a></li>
+                <li><a class="dropdown-item" href="#">Bayar</a></li>
+              </ul>
+            </li>
+          </ul>
+          <form class="d-flex mt-3" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
     </div>
-  
-<script>
-const btnDelete= document.querySelectorAll('.btn-delete');
-if(btnDelete) {
-  const btnArray = Array.from(btnDelete);
-  btnArray.forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      if(!confirm('Are you sure you want to delete it?')){
-        e.preventDefault();
-      }
-    });
-  })
-}
- 
-$(document).ready(function() {
-    $('#example').DataTable({     
-      "aLengthMenu": [[3, 5, 10, 25, -1], [3, 5, 10, 25, "All"]],
-        "iDisplayLength": 3
-       } 
-    );
-} );
- 
-</script>
-  </body>
+  </nav>
+
+  <div class="container-fluid pt-4 mb-3 pb-5">
+    {% block body %}
+    {% endblock %}
+  </div>
+  <div class="fixed-bottom container-fluid bg-secondary text-center pt-1 pb-2" style="bottom: 0;">
+    <small class="text-white">Sinarmas</small>
+  </div>
+
+  <!-- START JS -->
+  <script src="{{url_for('static', filename='vendor/bootstrap-5.2.2/js/bootstrap.bundle.min.js')}}"></script>
+  <script src="{{url_for('static', filename='vendor/datatables/datatables.min.js')}}"></script>
+  <script src="{{url_for('static', filename='js/main.js')}}"></script>
+  <script src="{{url_for('static', filename='js/enterprise.js')}}"></script>
+  <!-- END JS -->
+</body>
+
 </html>
