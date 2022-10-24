@@ -5,19 +5,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Supply Chain Management Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
   <script src="{{url_for('static', filename='vendor/jquery/jquery-3.6.1.min.js')}}"></script>
-  <link rel="stylesheet" href="{{url_for('static', filename='vendor/datatables/datatables.min.css')}}">
   <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-5.2.2/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='vendor/datatables/datatables.min.css')}}">
   <link rel="stylesheet" href="{{url_for('static', filename='css/custom.css')}}">
 </head>
 
 <body class="m-0 p-0">
 
   <!-- NAVIGATION  -->
-  <nav class="navbar bg-danger bg-opacity-75 sticky-top">
+  <nav class="navbar bg-dark bg-opacity-75 sticky-top">
     <div class="container-fluid">
       <a class="navbar-brand text-white" href="/">Supply Chain Management Platform</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+      <button class="navbar-toggler bg-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
         aria-controls="offcanvasNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -28,12 +29,6 @@
         </div>
         <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="/supplier">Supplier</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/finance">Finance</a>
-            </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -43,6 +38,17 @@
                 <li><a class="dropdown-item" href="/enterprise">Menu utama</a></li>
                 <li><a class="dropdown-item" href="#">Bayar</a></li>
               </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false" href="#">Supplier</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/profile-supplier">Data Profil</a></li>
+                <li><a class="dropdown-item" href="/supplier">Daftar Pesanan</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/finance">Finance</a>
             </li>
           </ul>
           <form class="d-flex mt-3" role="search">
@@ -58,7 +64,7 @@
     {% block body %}
     {% endblock %}
   </div>
-  <div class="fixed-bottom container-fluid bg-secondary text-center pt-1 pb-2" style="bottom: 0;">
+  <div class="fixed-bottom container-fluid bg-danger bg-opacity-75 text-center pt-1 pb-2" style="bottom: 0;">
     <small class="text-white">Sinarmas</small>
   </div>
 
