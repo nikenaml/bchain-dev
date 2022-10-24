@@ -3,6 +3,9 @@ from dataclasses import fields
 from datetime import datetime
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, make_response
+from logging.config import dictConfig
+from urllib.parse import urlparse
+
 ### IMPORT FOR PYMYSQL
 from flaskext.mysql import MySQL
 import pymysql
@@ -13,6 +16,23 @@ import pymysql
 # from ellipticcurve.ecdsa import Ecdsa
 # from ellipticcurve.signature import Signature
 # import argparse
+
+
+dictConfig({
+    'version': 1,
+    'formatters': {'default': {
+        'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+    }},
+    'handlers': {'wsgi': {
+        'class': 'logging.StreamHandler',
+        'stream': 'ext://flask.logging.wsgi_errors_stream',
+        'formatter': 'default'
+    }},
+    'root': {
+        'level': 'INFO',
+        'handlers': ['wsgi']
+    }
+})
 
 app = Flask("scf")
 app.secret_key = "Scf-Platform"
@@ -119,15 +139,20 @@ def index_user():
     return render_template("auth/select_account.html")
 
 
-@app.route('/<user>')
-def Index(user):
-    if (user != "enterprise"):
-        return render_template("common/failed.html", user=user)
+@app.route('/enterprise')
+def enterprise_index():
+    # app.logger.info('previous route => %s', request.refferer.path)
+    url = urlparse(request.referrer)
+    if url.path == '/supplier' or url.path == '/profile-supplier':
+        return render_template("common/failed.html", user='supplier')
+
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)  # type: ignore
  
     cur.execute('''SELECT orders.*, enterprises.nama_pt_enterprise FROM orders 
-    LEFT JOIN enterprises on orders.id_enterprise = enterprises.id''')
+    LEFT JOIN enterprises on orders.id_enterprise = enterprises.id
+    ORDER BY orders.id DESC
+    ''')
     data = cur.fetchall()
 
     cur.execute('''SELECT DISTINCT jenis_bayar, discount, id FROM payment_types ORDER BY jenis_bayar ASC''')
@@ -144,8 +169,7 @@ def Index(user):
         orders = data,
         itemList = itemList,
         paymentTypeList = paymentTypeList,
-        nameSupplierList = nameSupplierList,
-        user = user
+        nameSupplierList = nameSupplierList
     )
  
 @app.route('/api/order', methods=['POST'])  # type: ignore
@@ -161,6 +185,7 @@ def add_order():
         idJenisPembayaran = int(data.get('idJenisPembayaran'))
         jumlahBarang = int(data.get('jumlahBarang'))
         totalHarga = int(data.get('totalHarga'))
+        totalDiskon = int(data.get('totalDiskon'))
         # query_string = "SELECT harga_barang FROM items WHERE id = %s"
         # cur.execute(query_string, (idBarang))
         # barang = cur.fetchall()
@@ -171,11 +196,11 @@ def add_order():
         # totalExtraDiscSementara = extraDiscItemTertentu + extraDiscJumlahBarang + extraDiscHargaBarang
         # totalHarga = totalHarga - totalExtraDiscSementara
 
-        cur.execute('''INSERT INTO orders (id_enterprise, nama_pemesan, no_hp_pemesan, id_item, jumlah_barang, id_payment_type, total_harga) VALUES (%s,%s,%s,%s,%s,%s,%s)''', (idEnterprise, namaPemesan, noHpPemesan, idBarang, jumlahBarang, idJenisPembayaran, totalHarga))
+        cur.execute('''INSERT INTO orders (id_enterprise, nama_pemesan, no_hp_pemesan, id_item, jumlah_barang, id_payment_type, total_harga, total_diskon) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)''', (idEnterprise, namaPemesan, noHpPemesan, idBarang, jumlahBarang, idJenisPembayaran, totalHarga, totalDiskon))
         conn.commit()
         cur.close()
-        return make_response(jsonify({"order": data}), 200)
         # flash('Order sukses ditambahkan')
+        return make_response(jsonify({"order": data, "message": "Order sukses ditambahkan"}), 200)
         # return redirect(url_for('/enterprise'))
 
 # def getPembanding(pembanding):
@@ -183,16 +208,22 @@ def add_order():
 #         # TODO
     
 
-@app.route('/edit/<id>', methods = ['POST', 'GET'])
+@app.route('/api/order/<id>', methods = ['GET'])
 def get_order(id):
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
   
-    cur.execute('SELECT * FROM `orders` WHERE id = %s', (id))
+    cur.execute('''SELECT orders.*, enterprises.nama_pt_enterprise, items.nama_barang, payment_types.jenis_bayar 
+    FROM orders 
+    LEFT JOIN enterprises on orders.id_enterprise = enterprises.id 
+    LEFT JOIN items on orders.id_item = items.id 
+    LEFT JOIN payment_types on orders.id_payment_type = payment_types.id 
+    WHERE orders.id = %s''', (id))
     data = cur.fetchall()
     cur.close()
-    print(data[0])
-    return render_template('edit.html', order = data[0])
+    # print(data[0])
+    return make_response(jsonify({"order": data}), 200)
+    # return render_template('edit.html', order = data[0])
  
 @app.route('/update/<id>', methods=['POST'])  # type: ignore
 def update_order(id):
@@ -230,6 +261,44 @@ def delete_order(id):
     conn.commit()
     flash('Order Removed Successfully')
     return redirect(url_for('index'))
+
+
+# === SUPPLIER
+@app.route('/supplier')
+def main_menu_supplier():
+    url = urlparse(request.referrer)
+    if url.path == '/enterprise':
+        return render_template("common/failed.html", user='enterprise')
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)  # type: ignore
+ 
+    cur.execute('''SELECT orders.id, enterprises.nama_pt_enterprise, items.nama_barang, orders.jumlah_barang, payment_types.jenis_bayar, orders.sign_supplier, 
+    orders.sign_enterprise,orders.upload_voucher FROM orders 
+    LEFT JOIN enterprises on orders.id_enterprise = enterprises.id
+    LEFT JOIN items on orders.id_item = items.id
+    LEFT JOIN payment_types on orders.id_payment_type = payment_types.id
+    ''')
+    data = cur.fetchall()
+    
+    return render_template('supplier/manage_orders.html', 
+        manage_orders = data
+    )
+
+@app.route('/profile-supplier')
+def view_supplier_profile():
+    url = urlparse(request.referrer)
+    if url.path == '/enterprise':
+        return render_template("common/failed.html", user='enterprise')
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)  # type: ignore
+ 
+    cur.execute('''SELECT * FROM suppliers''')
+    data = cur.fetchall()
+    
+    return render_template('supplier/profile.html', 
+        profile = data
+    )
+
 
 if __name__ == '__main__':
     app.run(debug=True)
