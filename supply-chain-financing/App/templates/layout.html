@@ -1,0 +1,80 @@
+<!-- //layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Supply Chain Management Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  <script src="{{url_for('static', filename='vendor/jquery/jquery-3.6.1.min.js')}}"></script>
+  <link rel="stylesheet" href="{{url_for('static', filename='vendor/bootstrap-5.2.2/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='vendor/datatables/datatables.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/custom.css')}}">
+</head>
+
+<body class="m-0 p-0">
+
+  <!-- NAVIGATION  -->
+  <nav class="navbar bg-dark bg-opacity-75 sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand text-white" href="/">Supply Chain Management Platform</a>
+      <button class="navbar-toggler bg-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+        aria-controls="offcanvasNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Pilih user</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Core Enterprise
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/enterprise">Menu utama</a></li>
+                <li><a class="dropdown-item" href="#">Bayar</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false" href="#">Supplier</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/profile-supplier">Data Profil</a></li>
+                <li><a class="dropdown-item" href="/supplier">Daftar Pesanan</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/finance">Finance</a>
+            </li>
+          </ul>
+          <form class="d-flex mt-3" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid pt-4 mb-3 pb-5">
+    {% block body %}
+    {% endblock %}
+  </div>
+  <div class="fixed-bottom container-fluid bg-danger bg-opacity-75 text-center pt-1 pb-2" style="bottom: 0;">
+    <small class="text-white">Sinarmas</small>
+  </div>
+
+  <!-- START JS -->
+  <script src="{{url_for('static', filename='vendor/bootstrap-5.2.2/js/bootstrap.bundle.min.js')}}"></script>
+  <script src="{{url_for('static', filename='vendor/datatables/datatables.min.js')}}"></script>
+  <script src="{{url_for('static', filename='js/main.js')}}"></script>
+  <script src="{{url_for('static', filename='js/enterprise.js')}}"></script>
+  <script src="{{url_for('static', filename='js/supplier.js')}}"></script>
+  <!-- END JS -->
+</body>
+
+</html>

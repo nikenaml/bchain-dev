@@ -1,0 +1,67 @@
+<!-- //index.html -->
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
+  <div class="row">
+    <h3 class="mb-3">Halaman Profil Supplier</h3>
+    <div class="col-md-4">
+      {% with messages = get_flashed_messages()  %}
+      {% if messages %}
+      {% for message in messages %}
+      <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div> -->
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <!-- <div class="card card-body">
+      </div> -->
+    </div>
+    <div class="col-md-12">
+      <div class="table-responsive">
+        <table id="table_order" class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <td>ID</td>
+              <td>Nama PT Supplier</td>
+              <td>Tahun Berdiri</td>
+              <td>Alamat Perusahaan</td>
+              <td>Email Perusahaan</td>
+              <td>No Izin Usaha</td>
+              <td>Nama Pemilik</td>
+              <td>No KTP Pemilik</td>
+              <td>No NPWP Pemilik</td>
+              <td>No HP Pemilik</td>
+              <td>Updated at</td>
+              <td>Created at</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for data in profile %}
+            <tr>
+              <td>{{data.id}}</td>
+              <td>{{data.company_name}}</td>
+              <td>{{data.established_since}}</td>
+              <td>{{data.address}}</td>
+              <td>{{data.email}}</td>
+              <td>{{data.no_izin_usaha}}</td>
+              <td>{{data.owner_name}}</td>
+              <td>{{data.no_ktp_pemilik}}</td>
+              <td>{{data.no_npwp_pemilik}}</td>
+              <td>{{data.phonenumber}}</td>
+              <td>{{data.updated_at}}</td>
+              <td>{{data.created_at}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+<!-- <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script> -->

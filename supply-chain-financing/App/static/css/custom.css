@@ -1,0 +1,11 @@
+div.dataTables_wrapper div.dataTables_length select {
+    width: 50px;
+}
+
+.item-dropdown{
+    display:none;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+}

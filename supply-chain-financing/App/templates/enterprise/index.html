@@ -1,0 +1,232 @@
+<!-- //index.html -->
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
+  <div class="row g-3">
+    <h3>Halaman Core Enterprise</h3>
+    <div class="col-sm-12 col-md-4">
+      <div id="alert_message"></div>
+      <div class="card card-body">
+        <div class="mb-3">
+          <label class="form-label">Supplier</label>
+          <select name="id_supplier" id="id_supplier" class="form-select">
+            <option value="" disabled selected>-</option>;
+            {% for supplier in suppliers %}
+            <option value="{{supplier.id}}">{{supplier.company_name}}</option>;
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Pilih Barang</label>
+          <select name="nama_barang" id="nama_barang" class="form-select">
+            <option value="" disabled selected>-</option>;
+            {% for item in items %}
+            <option class="item-dropdown" value="{{ item.id }}" data-price="{{item.price}}">{{item.name}} - Rp
+              {{"{:,}".format(item.price)}}
+            </option>;
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Jumlah Barang</label>
+          <input min="1" type="number" class="form-control" name="jumlah_barang" id="jumlah_barang">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Jenis Pembayaran</label>
+          <select name="jenis_pembayaran" id="jenis_pembayaran" class="form-select">
+            <option value="" disabled selected>-</option>;
+            {% for payment in payment_types %}
+            <option value="{{payment.id}}" data-discount="{{payment.discount}}">{{payment.name}}</option>;
+            {% endfor %}
+          </select>
+        </div>
+        <div class="alert alert-primary" role="alert">
+          Discount: <span id="discount">0%</span><br>
+          Extra Discount: <span id="extra_discount">0%</span><br>
+          Total Discount: <span id="total_discount">0%</span><br>
+          Jumlah Discount: Rp <span id="jumlah_discount">0</span><br>
+          Total Harga: Rp <span id="total_harga">0</span>
+        </div>
+        <div class="d-flex">
+          <button class="btn btn-primary me-2" id="submit" data-bs-toggle="modal"
+            data-bs-target="#confirmationModal">
+            Simpan
+          </button>
+          <button class="btn btn-danger" type="reset" id="reset">
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-8">
+      <div class="m-2">
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered" id="enterprise_scf_datatable" style="width: 100%">
+            <thead>
+              <tr>
+                <td>ID</td>
+                <td>Nama Supplier</td>
+                <td>Nama Pemesan</td>
+                <td>No HP Pemesan</td>
+                <td>Nama Barang</td>
+                <td>Jumlah Barang</td>
+                <td>Sign By Supplier</td>
+                <td>Upload Voucher</td>
+                <td>Action</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>{{order.id}}</td>
+                <td>{{order.supplier.company_name}}</td>
+                <td>{{order.enterprise.owner_name}}</td>
+                <td>{{order.enterprise.phonenumber}}</td>
+                <td>{{order.item.name}}</td>
+                <td>{{order.item_count}}</td>
+                {%if order.sign_supplier != None%}
+                <td><span class="badge bg-success">Signed</span></td>
+                {%else%}
+                <td><span class="badge bg-danger">Not Sign</span></td>
+                {%endif%}
+                {%if order.upload_voucher == None%}
+                <td>
+                  <div class="input-group">
+                    <form action="/enterprise/order/{{order.id}}" method="POST" enctype="multipart/form-data">
+                      <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
+                      <button class="btn btn-outline-secondary" type="submit" id="input_voucher_file">Submit</button>
+                    </form>
+                  </div>                  
+                </td>
+                {%else%}
+                <td>Submitted</td>
+                {%endif%}
+                <td>
+                  <button class="btn btn-secondary btn-sm btn-view" data-order-id="{{order.id}}">View</button>
+                  <!-- <a href="/delete/{{order.id}}" class="btn btn-danger btn-delete btn-sm">delete</a> -->
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="confirmationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmationModalLabel">Perhatian</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa kembali sebelum menyetujui peringatan
+        ini.
+        Jika anda sudah yakin klik tombol "Setuju"
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak Setuju</button>
+        <button type="button" id="agree" class="btn btn-primary">Setuju</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="detailOrderModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="detailOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail Order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Waktu pembuatan order</span></div>
+              <div class="float-end"><span id="do_created_at"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Nama Perusahaan</span></div>
+              <div class="float-end"><span id="do_nama_pt_enterprise"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Nama Pemesan</span></div>
+              <div class="float-end"><span id="do_nama_pemesan"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">No Hp Pemesan</span></div>
+              <div class="float-end"><span id="do_no_hp_pemesan"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Nama Barang</span></div>
+              <div class="float-end"><span id="do_nama_barang"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Jumlah Barang</span></div>
+              <div class="float-end"><span id="do_jumlah_barang"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Jenis Pembayaran</span></div>
+              <div class="float-end"><span id="do_jenis_bayar"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Diskon yang Didapat</span></div>
+              <div class="float-end"><span id="do_total_discount"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Total Pembayaran</span></div>
+              <div class="float-end"><span id="do_total_harga"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Sign Enterprise</span></div>
+              <div class="float-end text-truncate" style="max-width: 20rem;"><span id="do_sign_e"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start"><span class="fw-bold">Sign Supplier</span></div>
+              <div class="float-end text-truncate" style="max-width: 20rem;"><span id="do_sign_s"></span></div>
+            </div>
+          </li>
+        </ul>
+        <div class="px-3 mt-3">
+          <div class="row">
+            <div class="col-12 text-center">
+              <span class="fw-bold">Voucher</span><br>
+              <img id="do_voucher" src="" class="img-fluid" alt="voucher">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
