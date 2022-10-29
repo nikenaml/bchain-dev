@@ -253,40 +253,40 @@ def get_order(id):
     return make_response(jsonify(order), 200)
     # return render_template('edit.html', order = data[0])
 
-@app.route('/check_discount', methods=['POST'])
-def add_extra_disc():
-    if request.method == 'POST':
-        data = request.get_json()
-        sourceBanding = data.sourceBanding
-        valueBanding = data.valueBanding
-        totalHarga =data.totalHarga
+# @app.route('/check_discount', methods=['POST'])
+# def add_extra_disc():
+#     if request.method == 'POST':
+#         data = request.get_json()
+#         sourceBanding = data.sourceBanding
+#         valueBanding = data.valueBanding
+#         totalHarga =data.totalHarga
 
-        total = 0
-        conn = mysql.connect()
-        cur = conn.cursor(pymysql.cursors.DictCursor)
-        cur.execute('''SELECT extra_disc.* FROM extra_disc''')
-        extraDiscList = cur.fetchall()
-        for ed in extraDiscList:
-            if (ed.condition_banding == '=>'):
-                if (sourceBanding == ed.source_banding):
-                    if  (valueBanding == ed.value_banding) & (valueBanding > ed.value_banding) :
-                        total = totalHarga - (totalHarga * ed.disc)
-                    else:
-                        pass
-            elif (ed.condition_banding == '='):
-                if (sourceBanding == ed.source_banding):
-                    if (valueBanding == ed.value_banding) :
-                        total = totalHarga - (totalHarga * ed.disc)
-                    else:
-                        pass
-            elif (ed.condition_banding == '>'):
-                if (sourceBanding == ed.source_banding):
-                    if (valueBanding > ed.value_banding):
-                        total = totalHarga - (totalHarga * ed.disc)
-                    else:
-                        pass
-        total_ed = total
-    return make_response(jsonify({"extra_discount": total_ed}), 200)
+#         total = 0
+#         conn = mysql.connect()
+#         cur = conn.cursor(pymysql.cursors.DictCursor)
+#         cur.execute('''SELECT extra_disc.* FROM extra_disc''')
+#         extraDiscList = cur.fetchall()
+#         for ed in extraDiscList:
+#             if (ed.condition_banding == '=>'):
+#                 if (sourceBanding == ed.source_banding):
+#                     if  (valueBanding == ed.value_banding) & (valueBanding > ed.value_banding) :
+#                         total = totalHarga - (totalHarga * ed.disc)
+#                     else:
+#                         pass
+#             elif (ed.condition_banding == '='):
+#                 if (sourceBanding == ed.source_banding):
+#                     if (valueBanding == ed.value_banding) :
+#                         total = totalHarga - (totalHarga * ed.disc)
+#                     else:
+#                         pass
+#             elif (ed.condition_banding == '>'):
+#                 if (sourceBanding == ed.source_banding):
+#                     if (valueBanding > ed.value_banding):
+#                         total = totalHarga - (totalHarga * ed.disc)
+#                     else:
+#                         pass
+#         total_ed = total
+#     return make_response(jsonify({"extra_discount": total_ed}), 200)
                 
 
 @app.route('/')
@@ -365,7 +365,7 @@ def upload_voucher(id):
         raise("Erorr")
 
 
-        
+# ajukan pinjaman 
 
 
 
