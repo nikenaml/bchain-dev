@@ -70,6 +70,7 @@
                 <td>No HP Pemesan</td>
                 <td>Nama Barang</td>
                 <td>Jumlah Barang</td>
+                <td>Total Harga</td>
                 <td>Sign By Supplier</td>
                 <td>Upload Voucher</td>
                 <td>Action</td>
@@ -84,6 +85,7 @@
                 <td>{{order.enterprise.phonenumber}}</td>
                 <td>{{order.item.name}}</td>
                 <td>{{order.item_count}}</td>
+                <td>{{order.total_harga}}</td>
                 {%if order.sign_supplier != None%}
                 <td><span class="badge bg-success">Signed</span></td>
                 {%else%}
@@ -102,7 +104,7 @@
                 <td>Submitted</td>
                 {%endif%}
                 <td>
-                  <button class="btn btn-secondary btn-sm btn-view" data-order-id="{{order.id}}">View</button>
+                  <button class="btn btn-warning btn-sm btn-view-detail-data" data-order-id="{{order.id}}">View</button>
                   <!-- <a href="/delete/{{order.id}}" class="btn btn-danger btn-delete btn-sm">delete</a> -->
                 </td>
               </tr>

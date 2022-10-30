@@ -121,11 +121,11 @@ $(document).ready(function () {
     };
     addOrder(payload);
   });
-  $(".btn-view").on("click", function () {
+  $(".btn-view-detail-data").on("click", function () {
     let idOrder = $(this).data("order-id");
     // $('#detailOrderModal').modal('show')
     getDetailOrder(idOrder);
-    getAdditionalData(idOrder);
+    // getAdditionalData(idOrder);
   });
 
   function getDetailOrder(id) {
@@ -235,6 +235,24 @@ $(document).ready(function () {
     }
   }
 
+  // pages supplier view voucher
+  function getVoucherData(id) {
+    $.ajax({
+      method: "GET",
+      url: `/api/order/${id}`,
+    }).done(function (data) {
+      $("#do_voucher").attr('src', `${data.voucher}`);
+      $("#dataVoucherModal").modal("show");
+    });
+  }
+
+  
+  $(".btn-view-get-voucher").on("click", function () {
+    let idOrder = $(this).data("order-id");
+    // $('#detailOrderModal').modal('show')
+    // getDetailOrder(idOrder);
+    getVoucherData(idOrder);
+  })
 
   // supplier - ajukan pinjaman
   function getAdditionalData(id) {
@@ -244,7 +262,7 @@ $(document).ready(function () {
     }).done(function (data) {
       // let data = d;
       // console.log("data", data);
-      $(".modal-title").text(`Additional Data for order id #${data.id}`);
+      // $(".modal-title").text(`Additional Data for order id #${data.id}`);
       $("#do_nama_pt_enterprise").text(data.nama_pt_enterprise);
       $("#do_nama_pemesan").text(data.nama_pemesan);
       $("#do_no_hp_pemesan").text(data.no_hp_pemesan);
@@ -260,4 +278,11 @@ $(document).ready(function () {
       $("#dataAdditionalModal").modal("show");
     });
   }
+
+  $(".btn-view-upload-data").on("click", function () {
+    let idOrder = $(this).data("order-id");
+    // $('#detailOrderModal').modal('show')
+    // getDetailOrder(idOrder);
+    getAdditionalData(idOrder);
+  });
 });

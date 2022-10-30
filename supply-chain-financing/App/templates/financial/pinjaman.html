@@ -31,7 +31,7 @@
               <td>Sign Enterprise</td>
               <td>Upload Voucher</td>
               <td>Action</td>
-              <!-- <td>Sign Financial</td> -->
+              <td>Sign Financial</td>
             </tr>
           </thead>
           <tbody>
@@ -57,34 +57,27 @@
               </td>
               {%else%}
               <td><span class="badge bg-success">Signed</span></td>
-              {%endif%} 
-              {%if order.sign_enterprise != None %}
+              {%endif%} {%if order.sign_enterprise != None %}
               <td><span class="badge bg-success">Signed</span></td>
               {%else%}
               <td><span class="badge bg-danger">Not Sign</span></td>
               {%endif%}
-              <!-- <td>{{order.upload_voucher}}</td> -->
+              <td>{{order.upload_voucher}}</td>
               <td>
                 <button
-                  class="btn btn-warning btn-view-get-voucher"
-                  data-order-id="{{order.id}}">
-                  View
-                </button>
-              </td>
-              <!-- <td>{{order.upload_voucher}}</td> -->
-              <td>
-                <button
-                  class="btn btn-secondary btn-view-upload-data"
+                  class="btn btn-secondary btn-view"
                   data-order-id="{{order.id}}"
                 >
                   Option
                 </button>
               </td>
-              <!-- {%if order.sign_enterprise != None %}
+              {%else%}
+              <td><span class="badge bg-success">Signed</span></td>
+              {%endif%} {%if order.sign_enterprise != None %}
               <td><span class="badge bg-success">Signed</span></td>
               {%else%}
               <td><span class="badge bg-danger">Not Sign</span></td>
-              {%endif%} -->
+              {%endif%}
             </tr>
             {% endfor %}
           </tbody>
@@ -130,56 +123,15 @@
   </div>
 </div>
 
-<!-- MODAL View Voucher -->
-<div
-  class="modal fade"
-  id="dataVoucherModal"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
-  aria-labelledby="dataVoucherModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="confirmationModalLabel">Voucher Piutang Dagang Enterprise</h1>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <div class="px-3 mt-3">
-          <div class="row">
-            <div class="col-12 text-center">
-              <img id="do_voucher" src="" class="img-fluid" alt="voucher">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL Additional Data -->
 <div class="modal fade" id="dataAdditionalModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   aria-labelledby="dataAdditionalModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <!-- <h5 class="modal-title">Data Pendukung</h5> -->
-        Silahkan lengkapi data pendukung berikut untuk keperluan data pinjaman ke pihak financial.
         Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
-        kembali sebelum klik tombol "Ajukan Pinjaman". Jika anda tidak ingin mengajukan pinjaman, silahkan
-        klik tombol "Batal Ajukan Pinjaman".
+        kembali sebelum menyetujui peringatan ini. Jika anda sudah yakin klik
+        tombol "Ajukan Pinjaman"
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         
       </div>
@@ -187,7 +139,7 @@
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <div class="clearfix">
-              <label class="form-label">Laporan Penjualan dan Biaya Supplier</label>
+              <label class="form-label">Laporan Penjualan dan Biaya</label>
               <div class="input-group">
                 <form action="#" method="POST" enctype="multipart/form-data">
                   <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
@@ -198,7 +150,7 @@
           </li>
           <li class="list-group-item">
             <div class="clearfix">
-              <label class="form-label">Laporan Keuangan Supplier</label>
+              <label class="form-label">Laporan Keuangan</label>
               <div class="input-group">
                 <form action="#" method="POST" enctype="multipart/form-data">
                   <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
@@ -209,7 +161,7 @@
           </li>
           <li class="list-group-item">
             <div class="clearfix">
-              <label class="form-label">Rekening Koran Supplier</label>
+              <label class="form-label">Rekening Koran</label>
               <div class="input-group">
                 <form action="#" method="POST" enctype="multipart/form-data">
                   <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
