@@ -1,0 +1,24 @@
+jalankan pip install Flask-Migrate
+
+lalu pada project yg sudah terpasang sqlalchemy flask, jalankan
+1. flask db init
+2. flask db migrate -m "Initial Migration"
+3. flask db upgrade
+
+
+penjelasan:
+1. untuk initial migration folder
+2. untuk membuat migration dari hasil class model,
+	argument -m "" adalah untuk deskripsi
+3. untuk menjalankan hasil dari migration yg tesssslah di buat di nomor 2
+
+
+
+===
+
+
+untuk menambahkan colum baru pada exisiting table, tinggal ubah model di code
+dan tambahkan column baru di model code tersebut
+
+1. flask db migrate -m "penambahan column xx pada table x"
+2. flask db upgrade

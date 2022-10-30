@@ -49,7 +49,7 @@
                   data-bs-toggle="modal"
                   data-bs-target="#confirmationSupplierModal"
                   data-url="{{url_for('confirm_order_from_supplier', id=order.id)}}"
-                  ><button class="btn btn-secondary" id="submit" data-order-id="{{order.id}}">
+                  ><button class="btn btn-primary" id="submit" data-order-id="{{order.id}}">
                     Confirm
                   </button>
                 </a>
@@ -64,16 +64,11 @@
               <td>{{order.upload_voucher}}</td>
               <td>
                 <button
-                  class="btn btn-primary btn-sm btn-view"
+                  class="btn btn-secondary btn-view"
                   data-order-id="{{order.id}}"
                 >
-                  Ajukan pinjaman
+                  Option
                 </button>
-                <a
-                  href="/delete/{{order.id}}"
-                  class="btn btn-danger btn-delete btn-sm"
-                  >Tidak Ajukan pinjaman</a
-                >
               </td>
             </tr>
             {% endfor %}
@@ -120,101 +115,57 @@
   </div>
 </div>
 
-<div class="modal fade" id="detailOrderModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="detailOrderModalLabel" aria-hidden="true">
+<div class="modal fade" id="dataAdditionalModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="dataAdditionalModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Data Pendukung</h5>
+        <!-- <h5 class="modal-title">Data Pendukung</h5> -->
+        Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
+        kembali sebelum menyetujui peringatan ini. Jika anda sudah yakin klik
+        tombol "Ajukan Pinjaman"
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        
       </div>
       <div class="modal-body">
         <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <div class="clearfix">
-              <div class="mb-3">
-                <label class="form-label">Laporan Penjualan dan Biaya</label>
-                <div class="input-group">
-                  <form action="#" method="POST" enctype="multipart/form-data">
-                    <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
-                    <button class="btn btn-outline-secondary" type="submit" id="input_voucher_file">Submit</button>
-                  </form>
-                </div>  
-              </div>
+              <label class="form-label">Laporan Penjualan dan Biaya</label>
+              <div class="input-group">
+                <form action="#" method="POST" enctype="multipart/form-data">
+                  <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
+                  <!-- <button class="btn btn-outline-secondary" type="submit" id="input_voucher_file">Submit</button> -->
+                </form>
+              </div>  
             </div>
           </li>
           <li class="list-group-item">
             <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Nama Perusahaan</span></div>
-              <div class="float-end"><span id="do_nama_pt_enterprise"></span></div>
+              <label class="form-label">Laporan Keuangan</label>
+              <div class="input-group">
+                <form action="#" method="POST" enctype="multipart/form-data">
+                  <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
+                  <!-- <button class="btn btn-outline-secondary" type="submit" id="input_voucher_file">Submit</button> -->
+                </form>
+              </div>  
             </div>
           </li>
           <li class="list-group-item">
             <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Nama Pemesan</span></div>
-              <div class="float-end"><span id="do_nama_pemesan"></span></div>
+              <label class="form-label">Rekening Koran</label>
+              <div class="input-group">
+                <form action="#" method="POST" enctype="multipart/form-data">
+                  <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
+                  <!-- <button class="btn btn-outline-secondary" type="submit" id="input_voucher_file">Submit</button> -->
+                </form>
+              </div>  
             </div>
           </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">No Hp Pemesan</span></div>
-              <div class="float-end"><span id="do_no_hp_pemesan"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Nama Barang</span></div>
-              <div class="float-end"><span id="do_nama_barang"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Jumlah Barang</span></div>
-              <div class="float-end"><span id="do_jumlah_barang"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Jenis Pembayaran</span></div>
-              <div class="float-end"><span id="do_jenis_bayar"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Diskon yang Didapat</span></div>
-              <div class="float-end"><span id="do_total_discount"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Total Pembayaran</span></div>
-              <div class="float-end"><span id="do_total_harga"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Sign Enterprise</span></div>
-              <div class="float-end text-truncate" style="max-width: 20rem;"><span id="do_sign_e"></span></div>
-            </div>
-          </li>
-          <li class="list-group-item">
-            <div class="clearfix">
-              <div class="float-start"><span class="fw-bold">Sign Supplier</span></div>
-              <div class="float-end text-truncate" style="max-width: 20rem;"><span id="do_sign_s"></span></div>
-            </div>
-          </li>
-        </ul>
-        <div class="px-3 mt-3">
-          <div class="row">
-            <div class="col-12 text-center">
-              <span class="fw-bold">Voucher</span><br>
-              <img id="do_voucher" src="" class="img-fluid" alt="voucher">
-            </div>
-          </div>
-        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal Ajukan Pinjaman</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ajukan Pinjaman</button>
       </div>
     </div>
   </div>
