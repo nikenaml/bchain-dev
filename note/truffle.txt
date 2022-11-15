@@ -1,0 +1,5 @@
+AKU NGANTUK, TIDUR DULUAN YAA
+
+tinggal jalanin truffle migrate yg blm bisa, dan ternyata stepnya gini
+https://ethereum.stackexchange.com/questions/19037/truffle-webpack-starts-with-error-metacoin-has-not-been-deployed-to-detected-ne
+harus jalanin testrpc dulu sebelum compile dan migrate

@@ -22,3 +22,20 @@ dan tambahkan column baru di model code tersebut
 
 1. flask db migrate -m "penambahan column xx pada table x"
 2. flask db upgrade
+
+==
+
+untuk rollback migration terakhir, jalankan command berikut:
+flask db downgrade
+
+untuk melihat hasil dari command "flask db downgrade" cobalah cek dbeaver, atau
+rdbms client lainnya, dan check apakah table / field yang diinginkan sudah
+hilang atau blm, jika belum hilang maka command tersebut gagal
+
+lalu jika setelah downgrade, ada perubahan yg ingin dilakukan, maka cobalah
+melihat file yang berada di dalam folder: migrations -> versions
+lalu cari file migration terakhir
+selanjutnya ubah isian yang berada di dalam function upgrade
+
+Penjelasan: hal ini akan merollback perubahan terakhir dari
+database yang terkoneksi dengan aplikasi
