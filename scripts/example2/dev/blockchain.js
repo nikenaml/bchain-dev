@@ -248,6 +248,7 @@ Blockchain.prototype.getTransaction = function(transactionId) {
 	};
 };
 
+// we will use this method inside of our address, address and point to fetch the data for a specific address that we are searching for.
 Blockchain.prototype.getAddressData = function(address) {
 	const addressTransactions = [];
 	this.chain.forEach(block => {
