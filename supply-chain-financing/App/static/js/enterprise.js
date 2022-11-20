@@ -125,7 +125,6 @@ $(document).ready(function () {
     let idOrder = $(this).data("order-id");
     // $('#detailOrderModal').modal('show')
     getDetailOrder(idOrder);
-    // getAdditionalData(idOrder);
   });
 
   function getDetailOrder(id) {
@@ -234,55 +233,4 @@ $(document).ready(function () {
       $("#submit").prop("disabled", false);
     }
   }
-
-  // pages supplier view voucher
-  function getVoucherData(id) {
-    $.ajax({
-      method: "GET",
-      url: `/api/order/${id}`,
-    }).done(function (data) {
-      $("#do_voucher").attr('src', `${data.voucher}`);
-      $("#dataVoucherModal").modal("show");
-    });
-  }
-
-  
-  $(".btn-view-get-voucher").on("click", function () {
-    let idOrder = $(this).data("order-id");
-    // $('#detailOrderModal').modal('show')
-    // getDetailOrder(idOrder);
-    getVoucherData(idOrder);
-  })
-
-  // supplier - ajukan pinjaman
-  function getAdditionalData(id) {
-    $.ajax({
-      method: "GET",
-      url: `/api/order/${id}`,
-    }).done(function (data) {
-      // let data = d;
-      // console.log("data", data);
-      // $(".modal-title").text(`Additional Data for order id #${data.id}`);
-      $("#do_nama_pt_enterprise").text(data.nama_pt_enterprise);
-      $("#do_nama_pemesan").text(data.nama_pemesan);
-      $("#do_no_hp_pemesan").text(data.no_hp_pemesan);
-      $("#do_nama_barang").text(data.nama_barang);
-      $("#do_jumlah_barang").text(`${formatNumer(data.jumlah_barang)} Buah`);
-      $("#do_jenis_bayar").text(data.jenis_bayar);
-      $("#do_total_discount").text(`Rp ${formatNumer(data.total_diskon ? data.total_diskon : 0)}`);
-      $("#do_total_harga").text(`Rp ${formatNumer(data.total_harga ? data.total_harga : 0)}`);
-      $("#do_sign_e").text(data.sign_enterprise ? data.sign_enterprise : '-');
-      $("#do_sign_s").text(data.sign_supplier ? data.sign_supplier : '-');
-      $("#do_voucher").attr('src', `${data.voucher}`);
-      $("#do_created_at").text(data.created_at);
-      $("#dataAdditionalModal").modal("show");
-    });
-  }
-
-  $(".btn-view-upload-data").on("click", function () {
-    let idOrder = $(this).data("order-id");
-    // $('#detailOrderModal').modal('show')
-    // getDetailOrder(idOrder);
-    getAdditionalData(idOrder);
-  });
 });

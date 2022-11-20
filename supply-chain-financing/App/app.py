@@ -139,6 +139,19 @@ class Order(db.Model):
     def __repr__(self):
         return f'<Order enterprise_id={self.enterprise_id}=> supplier_id={self.supplier_id} >'
 
+class ApplyLoan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer,db.ForeignKey('order.id'))
+    sell_report_path = db.Column(db.String(100))
+    finance_report_path = db.Column(db.String(100))
+    account_statement_path = db.Column(db.String(100))
+    sign_finance = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+    order = db.relationship('Order', backref='apply_loan')
+    def __repr__(self):
+        return f'<ApplyLoan order_id={self.order_id} >'
+
 class AlchemyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj.__class__, DeclarativeMeta):
@@ -164,6 +177,11 @@ class OrderSchema(ma.SQLAlchemyAutoSchema):
         model = Order
         include_fk = True
 
+class ApplyLoanSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = ApplyLoan
+        include_fk = True
+
 @app.route('/enterprise',methods=['GET'])
 def enterprise_index():
     # ---------------Create and Run Init SQL SCRIPT---------
@@ -175,8 +193,9 @@ def enterprise_index():
     #         db.engine.execute(query)
     #--------------------------------------------------------
     url = urlparse(request.referrer)
-    if url.path == '/supplier' or url.path == '/profile-supplier':
-        return render_template("common/failed.html", user='supplier')
+    if url.path == '/supplier' or url.path == '/profile-supplier' or url.path == '/finance':
+        return render_template("common/failed.html")
+        # , user='supplier')
     
     orders = Order.query.filter_by(enterprise_id=1).all()
     payment_types = PaymentType.query.all()
@@ -297,22 +316,24 @@ def index_user():
 @app.route('/supplier')
 def main_menu_supplier():
     url = urlparse(request.referrer)
-    if url.path == '/enterprise':
-        return render_template("common/failed.html", user='enterprise')
+    if url.path == '/enterprise' or url.path == '/finance':
+        return render_template("common/failed.html")
+        # , user='enterprise')
+    #     return function Supplier
     data = Order.query.filter_by(supplier_id=1).all()
     return render_template('supplier/manage_orders.html', 
         manage_orders = data
     )
 
-@app.route('/supplier/order/<id>',methods=['GET'])
+@app.route('/supplier/order/<id>',methods=['GET'])  # type: ignore
 def confirm_order_from_supplier(id):
-    order_schema = OrderSchema()
+    schema = OrderSchema()
     order = Order.query.filter_by(id=id).first()
     #Digital Enterprise Sign
     supplier_private_file = File.read(f"./key/private/{order.supplier.owner_name}.pem")
     supplier_privatekey = PrivateKey.fromPem(supplier_private_file)
 
-    order_serializer = order_schema.dump(order)
+    order_serializer = schema.dump(order)
     order_serializer['action'] = "sign_by_supplier"
     signature = Ecdsa.sign(json.dumps(order_serializer),supplier_privatekey).toBase64()
     
@@ -334,8 +355,9 @@ def confirm_order_from_supplier(id):
 @app.route('/profile-supplier')
 def view_supplier_profile():
     url = urlparse(request.referrer)
-    if url.path == '/enterprise':
-        return render_template("common/failed.html", user='enterprise')
+    if url.path == '/enterprise' or url.path == '/finance':
+        return render_template("common/failed.html")
+        # , user='enterprise')
     
     suppliers = Supplier.query.all()
     return render_template('supplier/profile.html',
@@ -362,12 +384,86 @@ def upload_voucher(id):
         return redirect(url_for('enterprise_index'))
         
     else:
-        raise("Erorr")
+        raise("Error")
 
 
-# ajukan pinjaman 
+@app.route('/api/supplier/upload-additional-data',methods=['POST'])
+def upload_additional_data_supplier():
+    order_id = request.form.get('order_id')
+    
+    if 'finance_report_file' not in request.files and 'sell_order_file' not in request.files and 'account_statement_file' not in request.files:
+        # flash('No file part')
+        return redirect(request.url)        
 
+    finance_report_file = request.files['finance_report_file']
+    sell_order_file = request.files['sell_order_file']
+    account_statement_file = request.files['account_statement_file']
 
+    files = [finance_report_file, sell_order_file, account_statement_file]
+
+    for i in files:
+        if i.filename == '':
+            # flash('No selected file')
+            redirect(request.url)
+            break
+    
+    filenames = []
+    for i in files:
+        if i.filename.endswith('pdf'):
+            ID = uuid.uuid4().hex
+            folder = UPLOAD_FOLDER + ID
+            current_time = str(datetime.now()).replace('-', '_').replace(':', '_')
+            if not os.path.exists(folder):
+                os.mkdir(folder)
+            filename  = folder + '/' + current_time + "." + i.filename.split(".")[-1]
+            i.save(filename)
+            filenames.append(filename)
+    # return make_response(jsonify({"order": order_id, "message": "Order sukses ditambahkan"}), 200)
+    app = ApplyLoan(order_id=order_id, finance_report_path=filenames[0], sell_report_path=filenames[1], account_statement_path=filenames[2])
+    db.session.add(app)   
+    db.session.commit()
+    return redirect(url_for('main_menu_supplier'))
+
+@app.route('/finance')
+def index_finance():
+    url = urlparse(request.referrer)
+    if url.path == '/enterprise' or url.path == '/supplier':
+        return render_template("common/failed.html")
+    data = ApplyLoan.query.join(Order, Order.id == ApplyLoan.order_id).order_by(ApplyLoan.id).all()
+    # data = db.session.query(Order.id, Order.created_at)\
+    #                 .join(Enterprise, Order.enterprise_id == Enterprise.id)\
+    #                 .join(Item, Order.item_id == Item.id)\
+    #                 .join(PaymentType, Order.payment_type_id == PaymentType.id)\
+    #                 .filter_by(id=id).first()
+
+    return render_template('finance/index.html', 
+        loans = data
+    )
+
+@app.route('/api/finance/confirm/<loan_id>', methods=['GET'])  # type: ignore
+def confirm_loan_by_finance(loan_id):
+    schema = ApplyLoanSchema()
+    loan = ApplyLoan.query.filter_by(id=loan_id).first()
+    #Digital Enterprise Sign
+    private_key_file = File.read(f"./key/private/{loan.order.supplier.owner_name}.pem")
+    private_key = PrivateKey.fromPem(private_key_file)
+
+    loan_schema_json = schema.dump(loan)
+    loan_schema_json['action'] = "sign_by_supplier"
+    signature = Ecdsa.sign(json.dumps(loan_schema_json),private_key).toBase64()
+    
+    # Add Digital Signature
+    loan.sign_finance = signature
+    db.session.add(loan)
+    db.session.commit()
+
+    # Send to BC
+    # res= requests.post("http://localhost:5001/transaction/broadcast",json=loan_schema_json)
+    # if res.status_code== 200:
+        # Mine to block
+        # requests.get("http://localhost:5001/mine")
+    return make_response(json.dumps(loan, cls=AlchemyEncoder))
+    # return make_response(loan, 200)
 
 if __name__ == '__main__':
     app.run(debug=True)

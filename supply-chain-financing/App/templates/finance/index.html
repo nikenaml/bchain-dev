@@ -2,7 +2,7 @@
 {% extends "layout.html" %} {% block body %}
 <div class="container">
   <div class="row">
-    <h3 class="mb-3">Halaman Manage Orders</h3>
+    <h3 class="mb-3">Halaman Manage Loans</h3>
     <div class="col-md-4">
       {% with messages = get_flashed_messages() %} {% if messages %} {% for
       message in messages %}
@@ -18,72 +18,86 @@
     </div>
     <div class="col-md-12">
       <div class="table-responsive">
-        <table class="table table-striped table-bordered" id="supplier_scf_datatable" style="width: 100%">
-          <!-- id="table_order"  -->
+        <table class="table table-striped table-bordered" id="finance_scf_datatable" style="width: 100%">
+
           <thead>
             <tr>
-              <td>ID Pesanan</td>
-              <td>Nama PT Enterprise</td>
-              <td>Nama Barang</td>
-              <td>Jumlah Barang</td>
-              <td>Jenis Bayar</td>
-              <td>Waktu Order</td>
-              <td>Sign Supplier</td>
+              <td>ID Pinjaman</td>
+              <td>ID Order</td>
               <td>Sign Enterprise</td>
-              <td>Upload Voucher</td>
-              <td>Action</td>
+              <td>Sign Supplier</td>
+              <td>Sell Report</td>
+              <td>Finance Report</td>
+              <td>Account Statement</td>
+              <td>Total Amount</td>
+              <td>Tanggal Peminjaman</td>
+              <td>Sign Finance</td>
             </tr>
           </thead>
           <tbody>
-            {% for order in manage_orders %}
+            {% for l in loans %}
             <tr>
-              <td>{{order.id}}</td>
-              <td>{{order.enterprise.company_name}}</td>
-              <td>{{order.item.name}}</td>
-              <td>{{order.item_count}}</td>
-              <td>{{order.payment_type.name}}</td>
-              <td>{{order.created_at}}</td>
-              {% if order.sign_supplier == None and order.sign_enterprise == None %}
-              <td><span class="badge bg-danger">Not Available</span></td>
-              {% elif order.sign_supplier == None and order.sign_enterprise != None %}
+              <td>{{l.id}}</td>
+              <td>{{l.order_id}}</td>
+              <!-- <td>{{l.order.sign_enterprise}}</td> -->
               <td>
-                <a class="" data-bs-toggle="modal" data-bs-target="#confirmationSupplierModal"
-                  data-url="{{url_for('confirm_order_from_supplier', id=order.id)}}"><button class="btn btn-primary"
-                    id="submit" data-order-id="{{order.id}}">
+                {%if l.order.sign_enterprise != None %}
+                <span class="badge bg-success">Signed</span>
+                {%else%}
+                <span class="badge bg-danger">Not Sign</span>
+                {%endif%}
+              </td>
+              <td>
+                {%if l.order.sign_supplier != None %}
+                <span class="badge bg-success">Signed</span>
+                {%else%}
+                <span class="badge bg-danger">Not Sign</span>
+                {%endif%}
+              </td>
+              <!-- <td>{{l.order.sign_supplier}}</td> -->
+              <td>
+                <a href="{{ l.sell_report_path }}" target="_blank">
+                  <button class="btn btn-warning">
+                    View PDF
+                  </button>
+                </a>
+              </td>
+              <td>
+                <a href="{{ l.finance_report_path }}" target="_blank">
+                  <button class="btn btn-warning">
+                    View PDF
+                  </button>
+                </a>
+              </td>
+              <td>
+                <a href="{{ l.account_statement_path }}" target="_blank">
+                  <button class="btn btn-warning">
+                    View PDF
+                  </button>
+                </a>
+              </td>
+              <td>
+                {%if  l.order.total_price != None %}
+                Rp {{ '{:,}'.format(l.order.total_price).replace(',','.') }}
+                {%else%}
+                0
+                {%endif%}
+              </td>
+              <td>{{l.created_at}}</td>
+              {% if l.order.sign_enterprise == None and l.order.sign_supplier == None %}
+              <td><span class="badge bg-danger">Not Available</span></td>
+              {% elif l.sign_finance == None and l.order.sign_enterprise != None and l.order.sign_supplier != None %}
+              <td>
+                <a data-bs-toggle="modal" data-bs-target="#confirmationSignFinanceModal"
+                  data-url="{{url_for('confirm_loan_by_finance', loan_id=l.id)}}">
+                  <button class="btn btn-primary" id="submit" data-id="{{l.id}}">
                     Confirm
                   </button>
                 </a>
               </td>
-              {% else %}
-              <td><span class="badge bg-success">Signed</span></td>
-              {%endif%} 
-              <td>
-                {%if order.sign_enterprise != None %}
-                <span class="badge bg-success">Signed</span>
-                {%else%}
-                <span class="badge bg-danger">Not Available</span>
-              </td>
+              {%else%}
+              <td><span class="badge bg-success">Confirmed</span></td>
               {%endif%}
-              <td>
-                {%if order.upload_voucher != None %}
-                <button class="btn btn-warning btn-view-get-voucher" data-voucher="{{order.upload_voucher}}">
-                  View
-                </button>
-                {%else%}
-                <span class="badge bg-danger">Not Available</span>
-                {%endif%}
-              </td>
-              <td>
-                {% if order.sign_supplier == None or order.sign_enterprise == None or order.upload_voucher == None %}
-                <span class="badge bg-danger">Not Available</span>
-                {% elif order.apply_loan %}
-                <span class="badge bg-success">Submitted</span>
-                {%else%}
-                <button class="btn btn-secondary btn-add-extra-data-supplier" data-order-id="{{order.id}}">
-                  Option
-                </button>
-                {%endif%}
-              </td>
             </tr>
             {% endfor %}
           </tbody>
@@ -94,8 +108,8 @@
 </div>
 
 <!-- MODAL -->
-<div class="modal fade" id="confirmationSupplierModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="confirmationSupplierModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmationSignFinanceModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="confirmationSignFinanceModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -153,9 +167,10 @@
         <div class="modal-header">
           <!-- <h5 class="modal-title">Data Pendukung</h5> -->
           <p>Silahkan lengkapi data pendukung berikut untuk keperluan data pinjaman ke pihak financial.
-          Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
-          kembali sebelum klik tombol "Ajukan Pinjaman". Jika anda tidak ingin mengajukan pinjaman, silahkan
-          klik tombol "Batal Ajukan Pinjaman".</p>
+            Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
+            kembali sebelum klik tombol "Ajukan Pinjaman". Jika anda tidak ingin mengajukan pinjaman,
+            silahkan
+            klik tombol "Batal Ajukan Pinjaman".</p>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <input type="hidden" name="order_id" class="additional_order_id" value="">

@@ -70,7 +70,6 @@
                 <td>No HP Pemesan</td>
                 <td>Nama Barang</td>
                 <td>Jumlah Barang</td>
-                <td>Total Harga</td>
                 <td>Sign By Supplier</td>
                 <td>Upload Voucher</td>
                 <td>Action</td>
@@ -85,24 +84,27 @@
                 <td>{{order.enterprise.phonenumber}}</td>
                 <td>{{order.item.name}}</td>
                 <td>{{order.item_count}}</td>
-                <td>{{order.total_harga}}</td>
-                {%if order.sign_supplier != None%}
-                <td><span class="badge bg-success">Signed</span></td>
-                {%else%}
-                <td><span class="badge bg-danger">Not Sign</span></td>
-                {%endif%}
-                {%if order.upload_voucher == None%}
                 <td>
+                  {%if order.sign_supplier != None%}
+                  <span class="badge bg-success">Signed</span>
+                  {%else%}
+                  <span class="badge bg-danger">Not Sign</span>
+                {%endif%}
+                </td>
+                <td>
+                  {% if order.sign_supplier == None %}
+                  <span class="badge bg-danger">Not Available</span>
+                  {% elif order.upload_voucher == None and order.sign_supplier != None %}
                   <div class="input-group">
                     <form action="/enterprise/order/{{order.id}}" method="POST" enctype="multipart/form-data">
                       <input type="file" class="form-control" id="voucher_file" name="file" aria-describedby="input_voucher_file" aria-label="Upload">
                       <button class="btn btn-outline-secondary" type="submit" id="input_voucher_file">Submit</button>
                     </form>
-                  </div>                  
+                  </div>
+                  {%else%}
+                  Submitted    
+                  {%endif%}
                 </td>
-                {%else%}
-                <td>Submitted</td>
-                {%endif%}
                 <td>
                   <button class="btn btn-warning btn-sm btn-view-detail-data" data-order-id="{{order.id}}">View</button>
                   <!-- <a href="/delete/{{order.id}}" class="btn btn-danger btn-delete btn-sm">delete</a> -->
