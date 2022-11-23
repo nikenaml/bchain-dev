@@ -1,0 +1,584 @@
+<!-- //index.html -->
+{% extends "layout.html" %} {% block body %}
+<div class="container">
+  <div class="row g-3">
+    <h3>Halaman Core Enterprise</h3>
+    <div class="col-sm-12 col-md-4">
+      <div id="alert_message"></div>
+      <div class="card card-body">
+        <div class="mb-3">
+          <label class="form-label">Supplier</label>
+          <select name="id_supplier" id="id_supplier" class="form-select">
+            <option value="" disabled selected>-</option>
+            {% for supplier in suppliers %}
+            <option value="{{supplier.id}}">{{supplier.company_name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Pilih Barang</label>
+          <select name="nama_barang" id="nama_barang" class="form-select">
+            <option value="" disabled selected>-</option>
+            {% for item in items %}
+            <option
+              class="item-dropdown"
+              value="{{ item.id }}"
+              data-price="{{item.price}}"
+            >
+              {{item.name}} - Rp {{"{:,}".format(item.price)}}
+            </option>
+            ; {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Jumlah Barang</label>
+          <input
+            min="1"
+            type="number"
+            class="form-control"
+            name="jumlah_barang"
+            id="jumlah_barang"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Jenis Pembayaran</label>
+          <select
+            name="jenis_pembayaran"
+            id="jenis_pembayaran"
+            class="form-select"
+          >
+            <option value="" disabled selected>-</option>
+            {% for payment in payment_types %}
+            <option value="{{payment.id}}" data-discount="{{payment.discount}}">
+              {{payment.name}}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="alert alert-primary" role="alert">
+          Discount: <span id="discount">0%</span><br />
+          Extra Discount: <span id="extra_discount">0%</span><br />
+          Total Discount: <span id="total_discount">0%</span><br />
+          Jumlah Discount: Rp <span id="jumlah_discount">0</span><br />
+          Total Harga: Rp <span id="total_harga">0</span>
+        </div>
+        <div class="d-flex">
+          <button
+            class="btn btn-primary me-2"
+            id="submit"
+            data-bs-toggle="modal"
+            data-bs-target="#confirmationModal"
+          >
+            Simpan
+          </button>
+          <button class="btn btn-danger" type="reset" id="reset">Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-8">
+      <div class="m-2">
+        <div class="table-responsive">
+          <table
+            class="table table-striped table-bordered"
+            id="enterprise_scf_datatable"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <td>ID</td>
+                <td>Nama Supplier</td>
+                <td>Nama Pemesan</td>
+                <td>No HP Pemesan</td>
+                <td>Nama Barang</td>
+                <td>Jumlah Barang</td>
+                <td>Sign By Supplier</td>
+                <td>Upload Voucher</td>
+                <td>Bayar Cicilan</td>
+                <td>Action</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td>{{order.id}}</td>
+                <td>{{order.supplier.company_name}}</td>
+                <td>{{order.enterprise.owner_name}}</td>
+                <td>{{order.enterprise.phonenumber}}</td>
+                <td>{{order.item.name}}</td>
+                <td>{{order.item_count}}</td>
+                <td>
+                  {%if order.sign_supplier != None%}
+                  <span class="badge bg-success">Signed</span>
+                  {%else%}
+                  <span class="badge bg-danger">Not Sign</span>
+                  {%endif%}
+                </td>
+                <td>
+                  {% if order.sign_supplier == None %}
+                  <span class="badge bg-danger">Not Available</span>
+                  {% elif order.upload_voucher == None and order.sign_supplier
+                  != None %}
+                  <div class="input-group">
+                    <form
+                      action="/enterprise/order/{{order.id}}"
+                      method="POST"
+                      id="upload-form"
+                      enctype="multipart/form-data"
+                    >
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="voucher_file"
+                        name="file"
+                        aria-describedby="input_voucher_file"
+                        aria-label="Upload"
+                      />
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="submit"
+                        id="input_voucher_file"
+                      >
+                        Submit
+                      </button>
+                    </form>
+                  </div>
+                  {%else%} Submitted {%endif%}
+                </td>
+                <td>
+                  {%if order.apply_loan != None and
+                  order.apply_loan.sign_finance != None %}
+                  <button
+                    class="btn btn-secondary btn-sm btn-pay-installment"
+                    data-order-id="{{order.id}}"
+                  >
+                    Bayar Cicilan
+                  </button>
+                  {%else%}
+                  <span class="badge bg-danger">Not Available</span>
+                  {%endif%}
+                </td>
+                <td>
+                  <button
+                    class="btn btn-warning btn-sm btn-view-detail-data"
+                    data-order-id="{{order.id}}"
+                  >
+                    View
+                  </button>
+                  <!-- <a href="/delete/{{order.id}}" class="btn btn-danger btn-delete btn-sm">delete</a> -->
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div
+  class="modal fade"
+  id="confirmationModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="confirmationModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmationModalLabel">Perhatian</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
+        kembali sebelum menyetujui peringatan ini. Jika anda sudah yakin klik
+        tombol "Setuju"
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Tidak Setuju
+        </button>
+        <button type="button" id="agree" class="btn btn-primary">Setuju</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="detailOrderModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="detailOrderModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail Order</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Horizontal Steppers -->
+        <div class="container pb-5 mb-sm-4">
+          <!-- Progress-->
+          <div class="steps">
+            <div class="steps-header">
+              <div class="progress">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  id="progress"
+                  style="width: 100%"
+                  aria-valuenow="40"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+            </div>
+            <div class="steps-body">
+              <div id="create_order" class="step">
+                <!-- <h1><i class="fa fa-globe"></i></h1> -->
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <path
+                      d="M12.89 1.45l8 4A2 2 0 0 1 22 7.24v9.53a2 2 0 0 1-1.11 1.79l-8 4a2 2 0 0 1-1.79 0l-8-4a2 2 0 0 1-1.1-1.8V7.24a2 2 0 0 1 1.11-1.79l8-4a2 2 0 0 1 1.78 0z"
+                    ></path>
+                    <polyline points="2.32 6.16 12 11 21.68 6.16"></polyline>
+                    <line x1="12" y1="22.76" x2="12" y2="11"></line>
+                  </svg>
+                </span>
+                Create Order
+              </div>
+              <div id="sign_by_supplier" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <polygon points="14 2 18 6 7 17 3 17 3 13 14 2"></polygon>
+                    <line x1="3" y1="22" x2="21" y2="22"></line>
+                  </svg>
+                </span>
+                Sign By Supplier
+              </div>
+              <div id="enterprise_upload_voucher" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <rect
+                      x="1"
+                      y="4"
+                      width="22"
+                      height="16"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                </span>
+                Enterprise Upload Voucher
+              </div>
+              <div id="apply_loan" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <path
+                      d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"
+                    ></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  </svg>
+                </span>
+                Apply Loan
+              </div>
+              <div id="loan_confirm_by_finance" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <path d="M22 11.07V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="23 3 12 14 9 11"></polyline>
+                  </svg>
+                </span>
+                Loan Confirm By Finance
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.Horizontal Steppers -->
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Waktu pembuatan order</span>
+              </div>
+              <div class="float-end"><span id="do_created_at"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Nama Perusahaan</span>
+              </div>
+              <div class="float-end">
+                <span id="do_nama_pt_enterprise"></span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Nama Pemesan</span>
+              </div>
+              <div class="float-end"><span id="do_nama_pemesan"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">No Hp Pemesan</span>
+              </div>
+              <div class="float-end"><span id="do_no_hp_pemesan"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Nama Barang</span>
+              </div>
+              <div class="float-end"><span id="do_nama_barang"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Jumlah Barang</span>
+              </div>
+              <div class="float-end"><span id="do_jumlah_barang"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Jenis Pembayaran</span>
+              </div>
+              <div class="float-end"><span id="do_jenis_bayar"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Diskon yang Didapat</span>
+              </div>
+              <div class="float-end"><span id="do_total_discount"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Total Pembayaran</span>
+              </div>
+              <div class="float-end"><span id="do_total_harga"></span></div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Sign Enterprise</span>
+              </div>
+              <div class="float-end text-truncate" style="max-width: 20rem">
+                <span id="do_sign_e"></span>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="clearfix">
+              <div class="float-start">
+                <span class="fw-bold">Sign Supplier</span>
+              </div>
+              <div class="float-end text-truncate" style="max-width: 20rem">
+                <span id="do_sign_s"></span>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="px-3 mt-3">
+          <div class="row">
+            <div class="col-12 text-center">
+              <span class="fw-bold">Voucher</span><br />
+              <img id="do_voucher" src="" class="img-fluid" alt="voucher" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Pay Installment Data -->
+<div
+  class="modal fade"
+  id="payInstallmentModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="payInstallmentModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <form
+        action="/api/pay_installment/add_payment"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <div class="modal-header">
+          <!-- <h5 class="modal-title">Data Pendukung</h5> -->
+          <p>
+            Silahkan lengkapi data pendukung berikut untuk keperluan data. Data
+            yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
+            kembali sebelum klik tombol "Ajukan Pinjaman". Jika anda tidak ingin
+            mengajukan pinjaman, silahkan klik tombol "Batal Ajukan Pinjaman".
+          </p>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <input
+          type="hidden"
+          name="applyloan_id"
+          id="applyloan_id"
+          value=""
+        />
+        <div class="modal-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <div class="clearfix">
+                <label class="form-label">Payment</label>
+                <div class="input-group">
+                  <input
+                    type="file"
+                    class="form-control"
+                    accept="application/image"
+                    name="pay_installment_file"
+                  />
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="clearfix">
+                <label class="form-label">Total Payment</label>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    class="form-control"
+                    name="total_payment"
+                  />
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="table-responsive m-2">
+            <table
+              class="table table-striped table-bordered"
+              id="pay_installment_table"
+              style="width: 100%"
+            >
+              <thead>
+                <tr>
+                  <td>ID</td>
+                  <td>Date</td>
+                  <td>Payment</td>
+                  <td>Total Payment</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+            Submit Payment
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

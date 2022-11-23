@@ -1,0 +1,172 @@
+{%extends "base.html"%}
+{% block content %}
+          <div class="col-md-12 col-lg-12">
+            <h4 class="mb-3">Loan Register</h4>
+            <hr class="my-4" />
+            <form class="needs-validation" novalidate>
+              <div class="row g-3">
+                
+                <div class="col-12">
+                  {% if user == "supplier"%}
+                  <div class="input-group mb-3">
+                  <label class="input-group-text" for="inputGroupFile01"
+                  >Account Receivable Vouchers</label
+                  >
+                  <input
+                  type="file"
+                    class="form-control"
+                    id="vouchers"
+                    />
+                  </div>
+                  {%else %}
+                  <p>Nanti ada voucher dagang</p>
+                  {%endif%}
+              </div>
+                
+                <h5 class="mb-3">Legality Documents</h5>
+                <hr class="my-4" />
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Fotocopy KTP</label
+                    >
+                    <input
+                    type="file"
+                    class="form-control"
+                    id="ktp"
+                    />
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01"
+                    >NPWP</label
+                    >
+                    <input
+                    type="file"
+                    class="form-control"
+                    id="ktp"
+                    />
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01"
+                    >Akta Nikah</label
+                    >
+                    <input
+                    type="file"
+                    class="form-control"
+                    id="ktp"
+                    />
+                  </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Surat Izin Usaha</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                
+                <h5 class="mb-3">Financial Documents</h5>
+                <hr class="my-4" />
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Sales and Expense Reports</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Financial Statements(Last 3 years)</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Financial Statements(Last 3 years)</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Checking/ Savings account</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                <h5 class="mb-3">Other Documents</h5>
+                <hr class="my-4" />
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Perkembangan Usaha</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Data Customer dan Supplier</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <label class="input-group-text" for="inputGroupFile01"
+                        >Daftar Stok Barang</label
+                        >
+                        <input
+                        type="file"
+                        class="form-control"
+                        id="ktp"
+                        />
+                    </div>
+                </div>
+              <hr class="my-4" />
+              <button class="w-100 btn btn-primary btn-lg" type="submit">
+                Continue to checkout
+              </button>
+            </form>
+          </div>
+          {%endblock%}
+    
