@@ -116,3 +116,54 @@ $(".btn-add-extra-data-supplier").on("click", function () {
   // getDetailOrder(idOrder);
   // getAdditionalData(idOrder);
 });
+
+$("#supplier_scf_datatable").on(
+  "click",
+  "tbody tr td .btn-view-detail-apply-data",
+  function () {
+    let idOrder = $(this).data("order-id");
+    // $('#detailOrderModal').modal('show')
+    getDetailApply(idOrder);
+  }
+);
+
+$(".btn-view-detail-apply-data").on("click", function () {
+  let v = $(this).data("voucher");
+  // $("#do_voucher").attr('src', `/static/UPLOAD_FOLDER/${v}`);
+  // $("#dataVoucherModal").modal("show");
+  $('#detailApplyModal').modal('show')
+
+})
+
+function getDetailApply(id) {
+  $.ajax({
+    method: "GET",
+    url: `/api/order/${id}`,
+  }).done(function (data) {
+    // let data = d;
+    // console.log("data", data);
+    $(".modal-title").text(`Detail Order #${data.id}`);
+    let divider = data.action / 5;
+    $("#progress").css("width", `${divider * 100}%`);
+    if (divider == 1 / 3) {
+      $("#create_apply_loan").attr("class", "step step-complete");
+      $("#loan_confirm_by_finance").attr("class", "step-active");
+      $("#enterprise_upload_voucher").attr("class", "step");
+      $("#apply_loan").attr("class", "step");
+      $("#loan_confirm_by_finance").attr("class", "step");
+    } else if (divider == 2 / 3) {
+      $("#create_order").attr("class", "step step-complete");
+      $("#sign_by_supplier").attr("class", "step step-complete");
+      $("#enterprise_upload_voucher").attr("class", "step step-active");
+      $("#apply_loan").attr("class", "step");
+      $("#loan_confirm_by_finance").attr("class", "step");
+    } else {
+      $("#create_order").attr("class", "step step-complete");
+      $("#sign_by_supplier").attr("class", "step step-complete");
+      $("#enterprise_upload_voucher").attr("class", "step step-complete");
+      $("#apply_loan").attr("class", "step step-complete");
+      $("#loan_confirm_by_finance").attr("class", "step step-complete");
+    }
+    $("#detailApplyModal").modal("show");
+  });
+}

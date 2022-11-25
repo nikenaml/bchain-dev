@@ -144,6 +144,7 @@ $(document).ready(function () {
       getDetailOrder(idOrder);
     }
   );
+  
 
   $("#enterprise_scf_datatable").on(
     "click",

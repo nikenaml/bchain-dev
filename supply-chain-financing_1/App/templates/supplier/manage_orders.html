@@ -92,6 +92,9 @@
                 <span class="badge bg-danger">Not Available</span>
                 {% elif order.apply_loan %}
                 <span class="badge bg-success">Submitted</span>
+                <button
+                class="badge bg-primary btn-view-detail-apply-data"
+                data-voucher="{{order.id}}">View Status</button>
                 {%else%}
                 <button
                   class="btn btn-secondary btn-add-extra-data-supplier"
@@ -109,6 +112,8 @@
     </div>
   </div>
 </div>
+
+
 
 <!-- MODAL -->
 <div
@@ -181,6 +186,130 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
           Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Check Status -->
+<div
+  class="modal fade"
+  id="detailApplyModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="detailApplyModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detail Order</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- Horizontal Steppers -->
+        <div class="container pb-5 mb-sm-4">
+          <!-- Progress-->
+          <div class="steps">
+            <div class="steps-header">
+              <div class="progress">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  id="progress"
+                  style="width: 100%"
+                  aria-valuenow="40"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+            </div>
+            <div class="steps-body">
+              <div id="create_order" class="step">
+                <!-- <h1><i class="fa fa-globe"></i></h1> -->
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <path
+                      d="M12.89 1.45l8 4A2 2 0 0 1 22 7.24v9.53a2 2 0 0 1-1.11 1.79l-8 4a2 2 0 0 1-1.79 0l-8-4a2 2 0 0 1-1.1-1.8V7.24a2 2 0 0 1 1.11-1.79l8-4a2 2 0 0 1 1.78 0z"
+                    ></path>
+                    <polyline points="2.32 6.16 12 11 21.68 6.16"></polyline>
+                    <line x1="12" y1="22.76" x2="12" y2="11"></line>
+                  </svg>
+                </span>
+                Create Order
+              </div>
+              <div id="sign_by_supplier" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <polygon points="14 2 18 6 7 17 3 17 3 13 14 2"></polygon>
+                    <line x1="3" y1="22" x2="21" y2="22"></line>
+                  </svg>
+                </span>
+                Sign By Supplier
+              </div>
+              <div id="enterprise_upload_voucher" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <rect
+                      x="1"
+                      y="4"
+                      width="22"
+                      height="16"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                </span>
+                Enterprise Upload Voucher
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Tutup
         </button>
       </div>
     </div>
