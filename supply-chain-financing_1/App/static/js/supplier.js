@@ -135,22 +135,31 @@ function getDetailApply(id) {
     url: `/api/order/${id}`,
   }).done(function (data) {
     console.log('data', data)
-    let divider = data.action / 3;
+    var divider = 0
+    if (data.action == 1 || data.action == 2 || data.action == 3) {
+      divider = 1 / 3;
+    }
+    if (data.action == 4) {
+      divider = 1 / 3;
+    }
+    if (data.action == 5) {
+      divider = 3 / 3;
+    }
     $("#progress").css("width", `${divider * 100}%`);
     const fixed = divider.toFixed(2);
     if (fixed == getFixedNumber(1,3)) {
-      $("#apply_loan_to_finance").attr("class", "step step-complete");
-      $("#loan_confirm_by_finance").attr("class", "step-active");
+      $("#apply_loan_to_finance").attr("class", "step step-active");
+      $("#loan_confirm_by_finance").attr("class", "step");
       $("#funds_disbursed").attr("class", "step");
-    } 
-    else if (fixed == getFixedNumber(2,3)) {
-      $("#apply_loan").attr("class", "step step-complete");
-      $("#loan_confirm_by_finance").attr("class", "step step-complete");
-      $("#funds_disbursed").attr("class", "step-step");
+    // } 
+    // else if (fixed == getFixedNumber(2,3)) {
+    //   $("#apply_loan").attr("class", "step step-complete");
+    //   $("#loan_confirm_by_finance").attr("class", "step step-complete");
+    //   $("#funds_disbursed").attr("class", "step-step");
     } else {
-      $("#apply_loan_to_finance").attr("class", "step step-complete");
-      $("#loan_confirm_by_finance").attr("class", "step step-complete");
-      $("#funds_disbursed").attr("class", "step step-complete");
+      $("#apply_loan_to_finance").attr("class", "step step-active");
+      $("#loan_confirm_by_finance").attr("class", "step step-active");
+      $("#funds_disbursed").attr("class", "step step-active");
     }
     $("#detailApplyModal").modal("show");
   });

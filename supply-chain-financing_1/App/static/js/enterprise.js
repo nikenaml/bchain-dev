@@ -213,35 +213,35 @@ $(document).ready(function () {
       let divider = data.action / 5;
       $("#progress").css("width", `${divider * 100}%`);
       if (divider == 1 / 5) {
-        $("#create_order").attr("class", "step step-complete");
-        $("#sign_by_supplier").attr("class", "step-active");
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step");
         $("#enterprise_upload_voucher").attr("class", "step");
         $("#apply_loan").attr("class", "step");
         $("#loan_confirm_by_finance").attr("class", "step");
       } else if (divider == 2 / 5) {
-        $("#create_order").attr("class", "step step-complete");
-        $("#sign_by_supplier").attr("class", "step step-complete");
-        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step");
         $("#apply_loan").attr("class", "step");
         $("#loan_confirm_by_finance").attr("class", "step");
       } else if (divider == 3 / 5) {
-        $("#create_order").attr("class", "step step-complete");
-        $("#sign_by_supplier").attr("class", "step step-complete");
-        $("#enterprise_upload_voucher").attr("class", "step step-complete");
-        $("#apply_loan").attr("class", "step step-active");
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#apply_loan").attr("class", "step");
         $("#loan_confirm_by_finance").attr("class", "step");
       } else if (divider == 4 / 5) {
-        $("#create_order").attr("class", "step step-complete");
-        $("#sign_by_supplier").attr("class", "step step-complete");
-        $("#enterprise_upload_voucher").attr("class", "step step-complete");
-        $("#apply_loan").attr("class", "step step-complete");
-        $("#loan_confirm_by_finance").attr("class", "step step-active");
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#apply_loan").attr("class", "step step-active");
+        $("#loan_confirm_by_finance").attr("class", "step");
       } else {
-        $("#create_order").attr("class", "step step-complete");
-        $("#sign_by_supplier").attr("class", "step step-complete");
-        $("#enterprise_upload_voucher").attr("class", "step step-complete");
-        $("#apply_loan").attr("class", "step step-complete");
-        $("#loan_confirm_by_finance").attr("class", "step step-complete");
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#apply_loan").attr("class", "step step-active");
+        $("#loan_confirm_by_finance").attr("class", "step step-active");
       }
       $("#detailOrderModal").modal("show");
     });
