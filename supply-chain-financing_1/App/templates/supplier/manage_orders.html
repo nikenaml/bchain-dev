@@ -93,8 +93,8 @@
                 {% elif order.apply_loan %}
                 <span class="badge bg-success">Submitted</span>
                 <button
-                class="badge bg-primary btn-view-detail-apply-data"
-                data-voucher="{{order.id}}">View Status</button>
+                class="badge bg-primary btn-view-status"
+                data-order-id="{{order.id}}">View Status</button>
                 {%else%}
                 <button
                   class="btn btn-secondary btn-add-extra-data-supplier"
@@ -205,7 +205,7 @@
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Detail Order</h5>
+        <h5 class="modal-title">Checking Status</h5>
         <button
           type="button"
           class="btn-close"
@@ -232,7 +232,7 @@
               </div>
             </div>
             <div class="steps-body">
-              <div id="create_order" class="step">
+              <div id="apply_loan_to_finance" class="step">
                 <!-- <h1><i class="fa fa-globe"></i></h1> -->
                 <span class="step-icon">
                   <svg
@@ -254,9 +254,9 @@
                     <line x1="12" y1="22.76" x2="12" y2="11"></line>
                   </svg>
                 </span>
-                Create Order
+                Create Apply Loan
               </div>
-              <div id="sign_by_supplier" class="step">
+              <div id="loan_confirm_by_finance" class="step">
                 <span class="step-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -270,13 +270,13 @@
                     stroke-linejoin="round"
                     class="feather feather-activity"
                   >
-                    <polygon points="14 2 18 6 7 17 3 17 3 13 14 2"></polygon>
-                    <line x1="3" y1="22" x2="21" y2="22"></line>
+                    <path d="M22 11.07V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="23 3 12 14 9 11"></polyline>
                   </svg>
                 </span>
-                Sign By Supplier
+                Loan Confirm By Finance
               </div>
-              <div id="enterprise_upload_voucher" class="step">
+              <div id="funds_disbursed" class="step">
                 <span class="step-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -301,7 +301,7 @@
                     <line x1="1" y1="10" x2="23" y2="10"></line>
                   </svg>
                 </span>
-                Enterprise Upload Voucher
+                Funds Disbursed
               </div>
             </div>
           </div>
@@ -309,7 +309,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          Tutup
+          Close
         </button>
       </div>
     </div>
