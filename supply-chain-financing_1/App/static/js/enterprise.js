@@ -36,8 +36,14 @@ $(document).ready(function () {
         width: "100px",
       },
       {
-        width: "20px",
+        width: "100px",
       },
+      {
+        width: "100px",
+      },
+      {
+        width: "100px",
+      }
     ],
   });
 
@@ -144,8 +150,12 @@ $(document).ready(function () {
       getDetailOrder(idOrder);
     }
   );
-  
 
+  $("#enterprise_scf_datatable").on("click","tbody tr td .btn-view-get-voucher",function(){
+    let label = $(this).data("label")
+      $('#dataVoucherModal div div div h1').text(label)
+  })
+  
   $("#enterprise_scf_datatable").on(
     "click",
     "tbody tr td .btn-pay-installment",
@@ -158,28 +168,36 @@ $(document).ready(function () {
       getPayInstallment(idOrder);
     }
   );
-
   function getPayInstallment(id) {
-    $("#pay_installment_table tbody").children().empty()
-    $("#pay_installment_table tbody").append('<h1>Loading</h1>')
+    $("#loading-receipt").append('<h1>Loading</h1>')
+    $("#img-good-receipt").attr("src","")
     $.ajax({
       method: "GET",
       dataType:'json',
       url: `/api/pay_installment/${id}`,
     }).done(function (data) {
       if (data.length==0){
-        $("#pay_installment_table tbody").children().empty()
+        $("#loading-receipt").children().empty()
+        $("#input-receipt-group").append(`<li class="list-group-item">
+        <div class="clearfix">
+          <label class="form-label">Payment</label>
+          <div class="input-group">
+            <input
+              type="file"
+              class="form-control"
+              accept="application/image"
+              name="pay_installment_file"
+            />
+          </div>
+        </div>
+      </li>`)
       }else{
+        $("#payInstallmentModal .modal-content .modal-body ul").empty()
+        $("#loading-receipt").children().empty()
         data.map((pay_installment)=>{
-          $("#pay_installment_table tbody").children().empty()
-          $("#pay_installment_table tbody:last-child").append(`
-            <tr>
-              <td>${pay_installment.id}</td>
-              <td>${pay_installment.created_at}</td>
-              <td>${pay_installment.pay_image}</td>
-              <td>${pay_installment.total_payment}</td>
-            </tr>
-          `)
+          // $("#pay_installment_table tbody").children().empty()
+          $("#img-good-receipt").attr("src", `/static/UPLOAD_FOLDER/${pay_installment.pay_image}`)
+          $('.btn-submit').hide()
         })
       }
     });
@@ -210,43 +228,94 @@ $(document).ready(function () {
       $("#do_voucher").attr("src", `/static/UPLOAD_FOLDER/${data.voucher}`);
       $("#do_created_at").text(data.created_at);
 
-      let divider = data.action / 5;
+      let divider = data.action / 8;
+      console.log('divider', divider)
+      console.log('7/8', 7/8)
       $("#progress").css("width", `${divider * 100}%`);
-      if (divider == 1 / 5) {
+      if (divider == 1 / 8) {
         $("#create_order").attr("class", "step step-active");
         $("#sign_by_supplier").attr("class", "step");
         $("#enterprise_upload_voucher").attr("class", "step");
         $("#apply_loan").attr("class", "step");
         $("#loan_confirm_by_finance").attr("class", "step");
-      } else if (divider == 2 / 5) {
+        $("#shipment").attr("class", "step");
+        $("#receive").attr("class", "step");
+        $("#payment_by_enterprise").attr("class", "step");
+      } else if (divider == 2 / 8) {
         $("#create_order").attr("class", "step step-active");
         $("#sign_by_supplier").attr("class", "step step-active");
         $("#enterprise_upload_voucher").attr("class", "step");
         $("#apply_loan").attr("class", "step");
         $("#loan_confirm_by_finance").attr("class", "step");
-      } else if (divider == 3 / 5) {
+        $("#shipment").attr("class", "step");
+        $("#receive").attr("class", "step");
+        $("#payment_by_enterprise").attr("class", "step");
+      } else if (divider == 3 / 8) {
         $("#create_order").attr("class", "step step-active");
         $("#sign_by_supplier").attr("class", "step step-active");
         $("#enterprise_upload_voucher").attr("class", "step step-active");
         $("#apply_loan").attr("class", "step");
         $("#loan_confirm_by_finance").attr("class", "step");
-      } else if (divider == 4 / 5) {
+        $("#shipment").attr("class", "step");
+        $("#receive").attr("class", "step");
+        $("#payment_by_enterprise").attr("class", "step");
+      } else if (divider == 4 / 8) {
         $("#create_order").attr("class", "step step-active");
         $("#sign_by_supplier").attr("class", "step step-active");
         $("#enterprise_upload_voucher").attr("class", "step step-active");
         $("#apply_loan").attr("class", "step step-active");
         $("#loan_confirm_by_finance").attr("class", "step");
-      } else {
+        $("#shipment").attr("class", "step");
+        $("#receive").attr("class", "step");
+        $("#payment_by_enterprise").attr("class", "step");
+      } else if (divider == 5 / 8){
         $("#create_order").attr("class", "step step-active");
         $("#sign_by_supplier").attr("class", "step step-active");
         $("#enterprise_upload_voucher").attr("class", "step step-active");
         $("#apply_loan").attr("class", "step step-active");
         $("#loan_confirm_by_finance").attr("class", "step step-active");
+        $("#shipment").attr("class", "step");
+        $("#receive").attr("class", "step");
+        $("#payment_by_enterprise").attr("class", "step");
+      } else if(divider == 6 / 8){
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#apply_loan").attr("class", "step step-active");
+        $("#loan_confirm_by_finance").attr("class", "step step-active");
+        $("#shipment").attr("class", "step step-active");
+        $("#receive").attr("class", "step");
+        $("#payment_by_enterprise").attr("class", "step");
+      } else if(divider == 7 / 8){
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#apply_loan").attr("class", "step step-active");
+        $("#loan_confirm_by_finance").attr("class", "step step-active");
+        $("#shipment").attr("class", "step step-active");
+        $("#receive").attr("class", "step step-active");
+        $("#payment_by_enterprise").attr("class", "step step-active");
+      }
+      else {
+        $("#create_order").attr("class", "step step-active");
+        $("#sign_by_supplier").attr("class", "step step-active");
+        $("#enterprise_upload_voucher").attr("class", "step step-active");
+        $("#apply_loan").attr("class", "step step-active");
+        $("#loan_confirm_by_finance").attr("class", "step step-active");
+        $("#shipment").attr("class", "step step-active");
+        $("#receive").attr("class", "step step-active");
+        $("#payment_by_enterprise").attr("class", "step step-active");
       }
       $("#detailOrderModal").modal("show");
     });
   }
-
+  $(".btn-view-receipt").on("click", function () {
+    let v = $(this).data("receipt");
+    let label = $(this).data("label")
+    $("#dataReceiptModal div div div h1").text(label)
+    $("#img-receipt").attr('src', `/static/UPLOAD_FOLDER/${v}`);
+    $("#dataReceiptModal").modal("show");
+  })
   function resetValue() {
     $("#id_enterprise").prop("selectedIndex", 0);
     $("#nama_pemesan").val("");
@@ -328,5 +397,5 @@ $(document).ready(function () {
     } else {
       $("#submit").prop("disabled", false);
     }
-  }
+  }  
 });
