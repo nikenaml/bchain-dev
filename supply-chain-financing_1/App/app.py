@@ -139,7 +139,7 @@ class PayInstallment(db.Model):
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
     applyloan_id = db.Column(db.Integer,db.ForeignKey('apply_loan.id'))
     pay_image = db.Column(db.String(100))
-    total_payment = db.Column(db.Integer)
+    # total_payment = db.Column(db.Integer)
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -153,6 +153,8 @@ class Order(db.Model):
     sign_supplier = db.Column(db.String(100))
     sign_enterprise = db.Column(db.String(100))
     upload_voucher = db.Column(db.String(100))
+    shipment_receipt = db.Column(db.String(100))
+    goods_receipt = db.Column(db.String(100))
     total_discount = db.Column(db.Integer)
     total_price = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=datetime.now)
@@ -359,6 +361,7 @@ def main_menu_supplier():
     return render_template('supplier/manage_orders.html', 
         manage_orders = orders
     )
+
 @app.route('/supplier/order/<id>',methods=['GET'])
 def confirm_order_from_supplier(id):
     order = Order.query.filter_by(id=id).first()
@@ -390,6 +393,7 @@ def confirm_order_from_supplier(id):
             return render_template('supplier/manage_orders.html', 
                 manage_orders = data
             )
+
 @app.route('/api/pay_installment/<id>', methods=['GET'])
 def get_pay_installment(id):
     o = get_order(int(id))
@@ -413,12 +417,30 @@ def add_pay_installment():
         filepath = ID + '/' + current_time + "." + file.filename.split(".")[-1]
         applyloan_id = request.form.get('applyloan_id')
         total_payment = request.form.get('total_payment')
-        pi = PayInstallment(applyloan_id=applyloan_id,pay_image=filepath,total_payment=total_payment)
+        pi = PayInstallment(applyloan_id=applyloan_id,pay_image=filepath)
         loan = ApplyLoan.query.filter_by(id=applyloan_id).first()
         pi.apply_loan = loan 
-        db.session.add(pi)   
+        db.session.add(pi)
         db.session.commit()
-        return redirect(url_for('enterprise_index'))
+        # return redirect(url_for('enterprise_index'))
+
+        # Serialize Order orm and add action description
+        order = get_order(int(applyloan_id))
+        order_schema = OrderSchema()
+        order_serializer = order_schema.dump(order)
+        order_serializer['action'] = "payment_by_enterprise"
+        
+        # Send to BC
+        res= requests.post("http://localhost:5001/transaction/broadcast",json=order_serializer)
+        if res.status_code== 200:
+            r = requests.get("http://localhost:5001/mine")
+            if r.status_code==200:
+                db.session.commit()
+                data = get_orders(by='supplier_id',value=1)
+                return render_template('supplier/manage_orders.html', 
+                    manage_orders = data
+                )
+
     else:
         return "<h1>The format is not accepted</h1>"
 
@@ -436,6 +458,12 @@ def get_order_endpoint(id):
         action = 4
     elif o.action == 'loan_confirm_by_finance':
         action = 5  
+    elif o.action == 'supplier_upload_shipment_receipt':
+        action = 6
+    elif o.action == 'submit_goods_receipt':
+        action = 7 
+    elif o.action == 'payment_by_enterprise':
+        action = 8 
     order = {
         "id": o.id,
         "nama_pt_enterprise": o.enterprise.company_name,
@@ -464,6 +492,36 @@ def view_supplier_profile():
         profile = suppliers
     )
 
+
+## TODO: bikin API untuk get status di page finance
+@app.route('/api/finance/status-loan/<id>', methods = ['GET'])
+def get_status_loan_endpoint(id):
+    o = get_order(int(id))
+    if o.action == 'loan_confirm_by_finance':
+        action = 1  
+    elif o.action == 'supplier_upload_shipment_receipt':
+        action = 2
+    elif o.action == 'submit_goods_receipt':
+        action = 3 
+    elif o.action == 'payment_by_enterprise':
+        action = 4 
+    order = {
+        "id": o.id,
+        "nama_pt_enterprise": o.enterprise.company_name,
+        "nama_pemesan": o.enterprise.owner_name,
+        "no_hp_pemesan": o.enterprise.phonenumber,
+        "nama_barang": o.item.name,
+        "jumlah_barang": o.item_count,
+        "jenis_bayar": o.payment_type.name,
+        "total_diskon": o.total_discount,
+        "total_harga": o.total_price,
+        "sign_enterprise": o.sign_enterprise,
+        "sign_supplier": o.sign_supplier,
+        "voucher": o.upload_voucher,
+        "created_at": o.created_at,
+        "action":action
+    }
+    return make_response(jsonify(order), 200)
     
 @app.route('/enterprise/order/<id>',methods=['POST'])
 def upload_voucher(id):
@@ -563,7 +621,6 @@ def upload_additional_data_supplier():
     else:
         return "<h1>Error</h1>"
 
-
 @app.route('/api/finance/confirm/<loan_id>', methods=['GET'])  # type: ignore
 def confirm_loan_by_finance(loan_id):
     schema = ApplyLoanSchema()
@@ -596,6 +653,77 @@ def confirm_loan_by_finance(loan_id):
             return "<h1>Cant mine block</h1>"
     else:
         return "<h1>Blockchain cant accept data<h1>"
+
+@app.route('/api/supplier/shipment/<id>', methods=['POST'])
+def submit_shipment_receipt(id):
+    order = get_order(int(id))
+    
+    if 'shipment_receipt_file' not in request.files :
+        # flash('No file part')
+        return redirect(request.url)        
+    
+    file = request.files['shipment_receipt_file']
+    
+
+    if file.filename.lower().endswith('jpeg') or file.filename.lower().endswith('jpg') or file.filename.lower().endswith('png') or file.filename.lower().endswith('pdf'):
+        ID = uuid.uuid4().hex
+        folder = 'static/' + UPLOAD_FOLDER +"/" + ID
+        current_time = str(datetime.now()).replace('-', '_').replace(':', '_')
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+        filename  = folder + '/' + current_time + "." + file.filename.split(".")[-1]
+        file.save(filename)
+        order.shipment_receipt = ID + '/' + current_time + "." + file.filename.split(".")[-1]
+        order_schema = OrderSchema()
+        order_serializer = order_schema.dump(order)
+        order_serializer['action'] = "supplier_upload_shipment_receipt"
+        res= requests.post("http://localhost:5001/transaction/broadcast",json=order_serializer)
+        if res.status_code== 200:
+            r = requests.get("http://localhost:5001/mine")
+            if r.status_code==200:
+                db.session.commit()
+                return redirect(url_for('main_menu_supplier'))
+            else:
+                return "<h1>Cant mine block</h1>"
+        else:
+            return "<h1>Blockchain cant accept data</h1>"
+    else:
+        return "<h1>The format is not accepted</h1>"
+
+@app.route('/api/enterprise/receive/<id>',methods=['POST'])
+def submit_goods_receipt(id):
+    order = get_order(int(id))
+    
+    if 'goods_receipt_file' not in request.files :
+        # flash('No file part')
+        return redirect(request.url)        
+    
+    file = request.files['goods_receipt_file']
+    
+    if file.filename.lower().endswith('jpeg') or file.filename.lower().endswith('jpg') or file.filename.lower().endswith('png') or file.filename.lower().endswith('pdf'):
+        ID = uuid.uuid4().hex
+        folder = 'static/' + UPLOAD_FOLDER +"/" + ID
+        current_time = str(datetime.now()).replace('-', '_').replace(':', '_')
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+        filename  = folder + '/' + current_time + "." + file.filename.split(".")[-1]
+        file.save(filename)
+        order.goods_receipt = ID + '/' + current_time + "." + file.filename.split(".")[-1]
+        order_schema = OrderSchema()
+        order_serializer = order_schema.dump(order)
+        order_serializer['action'] = "submit_goods_receipt"
+        res= requests.post("http://localhost:5001/transaction/broadcast",json=order_serializer)
+        if res.status_code== 200:
+            r = requests.get("http://localhost:5001/mine")
+            if r.status_code==200:
+                db.session.commit()
+                return redirect(url_for('enterprise_index'))
+            else:
+                return "<h1>Cant mine block</h1>"
+        else:
+            return "<h1>Blockchain cant accept data</h1>"
+    else:
+        return "<h1>The format is not accepted</h1>"
 
 if __name__ == '__main__':
     app.run(debug=True)
