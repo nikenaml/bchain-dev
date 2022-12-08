@@ -35,6 +35,8 @@
               <td>Sign Supplier</td>
               <td>Sign Enterprise</td>
               <td>Upload Voucher</td>
+              <td>Shipment Receipt</td>
+              <td>Receive Receipt</td>
               <td>Action</td>
             </tr>
           </thead>
@@ -79,6 +81,50 @@
                 <button
                   class="btn btn-warning btn-view-get-voucher"
                   data-voucher="{{order.upload_voucher}}"
+                  data-label = "Voucher"
+                >
+                  View
+                </button>
+                {%else%}
+                <span class="badge bg-danger">Not Available</span>
+                {%endif%}
+              </td>
+              <td>
+                {%if order.apply_loan == None or order.apply_loan.sign_finance == None %}
+                <span class="badge bg-danger">Not Available</span>
+                {%elif order.shipment_receipt == None %}
+                <div class="input-group">
+                  <form
+                    action="/api/supplier/shipment/{{order.id}}"
+                    method="POST"
+                    id="upload-form"
+                    enctype="multipart/form-data"
+                  >
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="shipment_proof"
+                      name="shipment_receipt_file"
+                      aria-describedby="input_voucher_file"
+                      aria-label="Upload"
+                    />
+                    <button
+                      class="btn btn-outline-secondary"
+                      type="submit"
+                      id="input_voucher_file"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </div>
+                {%elif order.shipment_receipt!= None %} Submitted {%endif%}
+              </td>
+              <td>
+                {%if order.goods_receipt != None %}
+                <button
+                  class="btn btn-warning btn-view-get-voucher"
+                  data-voucher="{{order.goods_receipt}}"
+                  data-label = "Goods Receipt"
                 >
                   View
                 </button>
@@ -93,8 +139,11 @@
                 {% elif order.apply_loan %}
                 <span class="badge bg-success">Submitted</span>
                 <button
-                class="badge bg-primary btn-view-status"
-                data-order-id="{{order.id}}">View Status</button>
+                  class="badge bg-primary btn-view-status"
+                  data-order-id="{{order.id}}"
+                >
+                  View Status
+                </button>
                 {%else%}
                 <button
                   class="btn btn-secondary btn-add-extra-data-supplier"
@@ -112,8 +161,6 @@
     </div>
   </div>
 </div>
-
-
 
 <!-- MODAL -->
 <div
@@ -137,7 +184,7 @@
         ></button>
       </div>
       <div class="modal-body">
-        Data yang telah disubmit tidak bisa diedit atau dihapus, mohon diperiksa
+        Pesanan yang disetujui tidak bisa diubah atau dibatalkan, mohon diperiksa
         kembali sebelum menyetujui peringatan ini. Jika anda sudah yakin klik
         tombol "Setuju"
       </div>
@@ -303,6 +350,77 @@
                 </span>
                 Funds Disbursed
               </div>
+              <div id="shipment" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-truck"
+                  >
+                    <rect x="1" y="3" width="15" height="13"></rect>
+                    <polygon
+                      points="16 8 20 8 23 11 23 16 16 16 16 8"
+                    ></polygon>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                  </svg>
+                </span>
+                Shipment
+              </div>
+              <div id="receive" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-gift"
+                  >
+                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                    <rect x="2" y="7" width="20" height="5"></rect>
+                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                    <path
+                      d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"
+                    ></path>
+                    <path
+                      d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"
+                    ></path>
+                  </svg>
+                </span>
+                Receive By Enterprise
+              </div>
+              <div id="payment_by_buyer" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <path d="M22 11.07V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="23 3 12 14 9 11"></polyline>
+                  </svg>
+                </span>
+                Payment by enterprise
+              </div>
             </div>
           </div>
         </div>
@@ -404,7 +522,12 @@
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
             Batal Ajukan Pinjaman
           </button>
-          <button type="submit" id='apply-loan-submit' class="btn btn-primary" data-bs-dismiss="modal">
+          <button
+            type="submit"
+            id="apply-loan-submit"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+          >
             Ajukan Pinjaman
           </button>
         </div>

@@ -93,7 +93,9 @@
                 <td>Jumlah Barang</td>
                 <td>Sign By Supplier</td>
                 <td>Upload Voucher</td>
-                <td>Bayar Cicilan</td>
+                <td>Shipment Receipt</td>
+                <td>Goods Receipt</td>
+                <td>Payment</td>
                 <td>Action</td>
               </tr>
             </thead>
@@ -145,14 +147,65 @@
                   {%else%} Submitted {%endif%}
                 </td>
                 <td>
-                  {%if order.apply_loan != None and
-                  order.apply_loan.sign_finance != None %}
+                  {%if order.shipment_receipt != None %}
+                  <button
+                    class="btn btn-warning btn-view-receipt"
+                    data-receipt="{{order.shipment_receipt}}"
+                    data-label="Shipment Receipt"
+                  >
+                    View
+                  </button>
+                  {%else%}
+                  <span class="badge bg-danger">Not Available</span>
+                  {%endif%}
+                </td>
+                <td>
+                  {% if order.shipment_receipt == None %}
+                  <span class="badge bg-danger">Not Available</span>
+                  {% elif order.goods_receipt == None and order.shipment_receipt
+                  != None %}
+                  <div class="input-group">
+                    <form
+                      action="/api/enterprise/receive/{{order.id}}"
+                      method="POST"
+                      enctype="multipart/form-data"
+                    >
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="voucher_file"
+                        name="goods_receipt_file"
+                        aria-describedby="input_voucher_file"
+                        aria-label="Upload"
+                      />
+                      <button
+                        class="btn btn-outline-secondary"
+                        type="submit"
+                        id="input_voucher_file"
+                      >
+                        Submit
+                      </button>
+                    </form>
+                  </div>
+                  {%else%}
+                  <button
+                    class="btn btn-warning btn-view-receipt"
+                    data-receipt="{{order.goods_receipt}}"
+                    data-label="Goods Receipt"
+                  >
+                    View
+                  </button>
+                  {%endif%}
+                </td>
+                <td>
+                  {%if order.goods_receipt != None %}
                   <button
                     class="btn btn-secondary btn-sm btn-pay-installment"
                     data-order-id="{{order.id}}"
                   >
-                    Bayar Cicilan
+                    Payment
                   </button>
+
                   {%else%}
                   <span class="badge bg-danger">Not Available</span>
                   {%endif%}
@@ -160,7 +213,6 @@
                 <td>
                   <button
                     class="btn btn-warning btn-sm btn-view-detail-data"
-                    
                     data-order-id="{{order.id}}"
                   >
                     View
@@ -208,6 +260,47 @@
           Tidak Setuju
         </button>
         <button type="button" id="agree" class="btn btn-primary">Setuju</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL View Voucher -->
+<div
+  class="modal fade"
+  id="dataReceiptModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="dataReceiptLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmationModalLabel">
+          Shipment Receipt
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="px-3 mt-3">
+          <div class="row">
+            <div class="col-12 text-center">
+              <img id="img-receipt" src="" class="img-fluid" alt="voucher" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
       </div>
     </div>
   </div>
@@ -343,7 +436,7 @@
                     <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                   </svg>
                 </span>
-                Apply Loan
+                Supplier Apply Loan
               </div>
               <div id="loan_confirm_by_finance" class="step">
                 <span class="step-icon">
@@ -364,6 +457,77 @@
                   </svg>
                 </span>
                 Loan Confirm By Finance
+              </div>
+              <div id="shipment" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-truck"
+                  >
+                    <rect x="1" y="3" width="15" height="13"></rect>
+                    <polygon
+                      points="16 8 20 8 23 11 23 16 16 16 16 8"
+                    ></polygon>
+                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                  </svg>
+                </span>
+                Shipment By Supplier
+              </div>
+              <div id="receive" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-gift"
+                  >
+                    <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                    <rect x="2" y="7" width="20" height="5"></rect>
+                    <line x1="12" y1="22" x2="12" y2="7"></line>
+                    <path
+                      d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"
+                    ></path>
+                    <path
+                      d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"
+                    ></path>
+                  </svg>
+                </span>
+                Receive
+              </div>
+              <div id="payment" class="step">
+                <span class="step-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-activity"
+                  >
+                    <path d="M22 11.07V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="23 3 12 14 9 11"></polyline>
+                  </svg>
+                </span>
+                Payment
               </div>
             </div>
           </div>
@@ -469,7 +633,7 @@
           <div class="row">
             <div class="col-12 text-center">
               <span class="fw-bold">Voucher</span><br />
-              <img id="do_voucher" src="" class="img-fluid" alt="voucher" />
+              <img id="do_voucher" src="" class="img-fluid" alt="voucher unavailable" />
             </div>
           </div>
         </div>
@@ -493,7 +657,7 @@
   aria-labelledby="payInstallmentModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+  <div class="modal-dialog">
     <div class="modal-content">
       <form
         action="/api/pay_installment/add_payment"
@@ -515,66 +679,24 @@
             aria-label="Close"
           ></button>
         </div>
-        <input
-          type="hidden"
-          name="applyloan_id"
-          id="applyloan_id"
-          value=""
-        />
+        <input type="hidden" name="applyloan_id" id="applyloan_id" value="" />
         <div class="modal-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">
-              <div class="clearfix">
-                <label class="form-label">Payment</label>
-                <div class="input-group">
-                  <input
-                    type="file"
-                    class="form-control"
-                    accept="application/image"
-                    name="pay_installment_file"
-                  />
-                </div>
+          <div class="px-3 mt-3">
+            <div class="row">
+              <div id="loading-receipt" class="col-12 text-center">
+                <img id="img-good-receipt" class="img-fluid" />
               </div>
-            </li>
-            <li class="list-group-item">
-              <div class="clearfix">
-                <label class="form-label">Total Payment</label>
-                <div class="input-group">
-                  <input
-                    type="number"
-                    class="form-control"
-                    name="total_payment"
-                  />
-                </div>
-              </div>
-            </li>
-          </ul>
-          <div class="table-responsive m-2">
-            <table
-              class="table table-striped table-bordered"
-              id="pay_installment_table"
-              style="width: 100%"
-            >
-              <thead>
-                <tr>
-                  <td>ID</td>
-                  <td>Date</td>
-                  <td>Payment</td>
-                  <td>Total Payment</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                </tr>
-              </tbody>
-            </table>
+            </div>
           </div>
+          <ul class="list-group list-group-flush" id="input-receipt-group">
+
+          </ul>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
             Close
           </button>
-          <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+          <button type="submit" class="btn btn-primary btn-submit" data-bs-dismiss="modal">
             Submit Payment
           </button>
         </div>
@@ -582,4 +704,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}
