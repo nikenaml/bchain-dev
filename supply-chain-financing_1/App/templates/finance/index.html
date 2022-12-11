@@ -26,6 +26,7 @@
               <td>ID Order</td>
               <td>Sign Enterprise</td>
               <td>Sign Supplier</td>
+              <td>Voc Piutang Dagang Enterprise</td>
               <td>Sell Report</td>
               <td>Finance Report</td>
               <td>Account Statement</td>
@@ -55,6 +56,13 @@
                 {%endif%}
               </td>
               <!-- <td>{{l.order.sign_supplier}}</td> -->
+              <td>
+                <button class="btn btn-warning btn-view-get-voucher"
+                  data-voucher="{{l.order.upload_voucher}}"
+                  data-label = "Voucher">
+                    View Image
+                </button>
+              </td>             
               <td>
                 <a href="{{ l.sell_report_path }}" target="_blank">
                   <button class="btn btn-warning">
